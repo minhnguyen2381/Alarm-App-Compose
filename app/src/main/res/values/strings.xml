@@ -10,4 +10,16 @@
     <string name="next_alarm_format">Next alarm in %1$s</string>
     <string name="action_add_alarm">Add Alarm</string>
     <string name="daily">Daily</string>
+    <string name="close">Close</string>
+    <string name="edit_alarm">Edit Alarm</string>
+    <string name="save">Save</string>
+    <string name="repeat">Repeat</string>
+    <string name="alarm_label">Alarm Label</string>
+    <string name="sound">Sound</string>
+    <string name="default_sound">Default Sound</string>
+    <string name="fade_in_sound">Fade-in sound</string>
+    <string name="vibration_pattern">Vibration Pattern</string>
+    <string name="wake_up_missions">Wake-up Missions</string>
+    <string name="math_mission_info">Solve 3 math problems (Medium difficulty) to turn off the alarm. This ensures your brain is fully awake.</string>
+    <string name="delete_alarm">Delete Alarm</string>
 </resources>
