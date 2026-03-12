@@ -17,13 +17,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Immutable
 data class CreateEditAlarmUiState(
     val initialAlarmId: String? = null,
     val time: String = "07:30", // Default from mock
     val label: String = "Wake up for work",
-    val repeatDays: List<DayOfWeek> = emptyList(), // T, W, T, F is checked from mock 
+    val repeatDays: ImmutableList<DayOfWeek> = persistentListOf(), // T, W, T, F is checked from mock 
     val soundUri: String? = "Morning Breeze (Gentle)", // Mocked title for now
     val isFadeInSound: Boolean = false,
     val vibrationPattern: VibrationPattern = VibrationPattern.HEARTBEAT,
@@ -67,7 +70,7 @@ class CreateEditAlarmViewModel @Inject constructor(
                     } else {
                         currentDays.add(event.day)
                     }
-                    state.copy(repeatDays = currentDays)
+                    state.copy(repeatDays = currentDays.toImmutableList())
                 }
             }
             is CreateEditAlarmEvent.SoundUriChanged -> {

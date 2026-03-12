@@ -6,6 +6,8 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.domain.model.VibrationPattern
 import com.nguyennhatminh614.alarmappcompose.domain.model.WakeUpMission
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Entity(tableName = "alarms")
 data class AlarmEntity(
@@ -23,9 +25,9 @@ data class AlarmEntity(
 // Extension functions Mapper
 fun AlarmEntity.toDomainModel(): Alarm {
     val days = if (repeatDays.isEmpty()) {
-        emptyList()
+        persistentListOf()
     } else {
-        repeatDays.split(",").map { DayOfWeek.valueOf(it) }
+        repeatDays.split(",").map { DayOfWeek.valueOf(it) }.toImmutableList()
     }
     return Alarm(
         id = id,
