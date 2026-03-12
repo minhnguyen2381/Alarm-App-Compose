@@ -1,5 +1,6 @@
 package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 import javax.inject.Inject
 
+@Immutable
 data class CreateEditAlarmUiState(
     val initialAlarmId: String? = null,
     val time: String = "07:30", // Default from mock
