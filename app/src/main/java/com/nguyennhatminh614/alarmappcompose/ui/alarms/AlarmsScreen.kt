@@ -21,11 +21,14 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.AlarmItem
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.NextAlarmBanner
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmsScreen(
-    alarms: List<Alarm>,
+    alarms: ImmutableList<Alarm>,
     onToggleAlarm: (Alarm, Boolean) -> Unit,
     onAddAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -94,15 +97,15 @@ fun AlarmsScreen(
 
 // ======================== PREVIEWS ========================
 
-class AlarmsPreviewParameterProvider : PreviewParameterProvider<List<Alarm>> {
+class AlarmsPreviewParameterProvider : PreviewParameterProvider<ImmutableList<Alarm>> {
     override val values = sequenceOf(
-        listOf(
+        persistentListOf(
             Alarm(
                 id = "1",
                 time = "07:00",
                 label = "WORK",
                 isEnabled = true,
-                repeatDays = listOf(
+                repeatDays = persistentListOf(
                     DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
                     DayOfWeek.THURSDAY, DayOfWeek.FRIDAY
                 )
@@ -112,24 +115,24 @@ class AlarmsPreviewParameterProvider : PreviewParameterProvider<List<Alarm>> {
                 time = "08:30",
                 label = "GYM",
                 isEnabled = true,
-                repeatDays = listOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY)
+                repeatDays = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY)
             ),
             Alarm(
                 id = "3",
                 time = "06:45",
                 label = "WAKE UP",
                 isEnabled = false,
-                repeatDays = DayOfWeek.values().toList()
+                repeatDays = DayOfWeek.entries.toImmutableList()
             )
         ),
-        emptyList()
+        persistentListOf()
     )
 }
 
 @DevicePreview
 @Composable
 fun AlarmsScreenPreview(
-    @PreviewParameter(AlarmsPreviewParameterProvider::class) alarms: List<Alarm>
+    @PreviewParameter(AlarmsPreviewParameterProvider::class) alarms: ImmutableList<Alarm>
 ) {
     MaterialTheme {
         AlarmsScreen(

@@ -2,7 +2,12 @@ package com.nguyennhatminh614.alarmappcompose.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
+import com.nguyennhatminh614.alarmappcompose.domain.model.VibrationPattern
+import com.nguyennhatminh614.alarmappcompose.domain.model.WakeUpMission
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Entity(tableName = "alarms")
 data class AlarmEntity(
@@ -10,31 +15,51 @@ data class AlarmEntity(
     val time: String,
     val label: String,
     val isEnabled: Boolean,
-    val repeatDays: String // Lưu trữ dưới dạng chuỗi (ví dụ: "MONDAY,TUESDAY")
+    val repeatDays: String, // Lưu trữ dưới dạng chuỗi (ví dụ: "MONDAY,TUESDAY")
+    val soundUri: String? = null,
+    val isFadeInSound: Boolean = false,
+    val vibrationPattern: String = "DEFAULT",
+    val wakeUpMission: String = "NONE"
 )
 
 // Extension functions Mapper
-fun AlarmEntity.toDomainModel(): com.nguyennhatminh614.alarmappcompose.domain.model.Alarm {
+fun AlarmEntity.toDomainModel(): Alarm {
     val days = if (repeatDays.isEmpty()) {
-        emptyList()
+        persistentListOf()
     } else {
-        repeatDays.split(",").map { DayOfWeek.valueOf(it) }
+        repeatDays.split(",").map { DayOfWeek.valueOf(it) }.toImmutableList()
     }
-    return com.nguyennhatminh614.alarmappcompose.domain.model.Alarm(
+    return Alarm(
         id = id,
         time = time,
         label = label,
         isEnabled = isEnabled,
-        repeatDays = days
+        repeatDays = days,
+        soundUri = soundUri,
+        isFadeInSound = isFadeInSound,
+        vibrationPattern = try {
+            VibrationPattern.valueOf(vibrationPattern)
+        } catch (e: Exception) {
+            VibrationPattern.DEFAULT
+        },
+        wakeUpMission = try {
+            WakeUpMission.valueOf(wakeUpMission)
+        } catch (e: Exception) {
+            WakeUpMission.NONE
+        }
     )
 }
 
-fun com.nguyennhatminh614.alarmappcompose.domain.model.Alarm.toEntity(): AlarmEntity {
+fun Alarm.toEntity(): AlarmEntity {
     return AlarmEntity(
         id = id,
         time = time,
         label = label,
         isEnabled = isEnabled,
-        repeatDays = repeatDays.joinToString(",") { it.name }
+        repeatDays = repeatDays.joinToString(",") { it.name },
+        soundUri = soundUri,
+        isFadeInSound = isFadeInSound,
+        vibrationPattern = vibrationPattern.name,
+        wakeUpMission = wakeUpMission.name
     )
 }

@@ -8,8 +8,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @HiltViewModel
 class AlarmsViewModel @Inject constructor(
@@ -17,10 +21,10 @@ class AlarmsViewModel @Inject constructor(
 ) : ViewModel() {
 
     // uiState represents the list of Alarms
-    val alarms: StateFlow<List<Alarm>> = useCases.getAlarms().stateIn(
+    val alarms: StateFlow<ImmutableList<Alarm>> = useCases.getAlarms().map { it.toImmutableList() }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = emptyList()
+        initialValue = persistentListOf()
     )
 
     fun onToggleAlarm(alarm: Alarm, isEnabled: Boolean) {
@@ -44,7 +48,7 @@ class AlarmsViewModel @Inject constructor(
                 time = "07:00",
                 label = "New Alarm",
                 isEnabled = true,
-                repeatDays = emptyList()
+                repeatDays = persistentListOf()
             )
             useCases.addAlarm(newAlarm)
         }
