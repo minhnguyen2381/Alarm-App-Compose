@@ -19,7 +19,8 @@ interface UsersDao {
     fun insertDetails(detailsEntity: DetailsEntity)
 }
 
-@Database(entities = [UserEntity::class, DetailsEntity::class], version = 1, exportSchema = false)
+@Database(entities = [UserEntity::class, DetailsEntity::class, AlarmEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract val usersDao: UsersDao
+    abstract val alarmsDao: AlarmsDao
 }

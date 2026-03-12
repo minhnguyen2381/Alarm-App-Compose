@@ -95,9 +95,6 @@ dependencies {
     //==================== Navigation ====================
     implementation libs.navigation.compose
 
-    //==================== Memory Leak Detection ====================
-    debugImplementation libs.leakcanary.android
-
     //==================== CameraX & MLKit ====================
     implementation libs.camerax.core
     implementation libs.camerax.camera2
