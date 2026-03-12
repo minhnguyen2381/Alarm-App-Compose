@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,12 +22,14 @@ import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.Dan
 import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.RepeatSection
 import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.TimePickerSection
 import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.WakeUpMissionsSection
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
+import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 
 @Composable
 fun CreateEditAlarmScreen(
     onNavigateBack: () -> Unit,
-    viewModel: CreateEditAlarmViewModel = hiltViewModel()
 ) {
+    val viewModel: CreateEditAlarmViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     CreateEditAlarmContent(
@@ -102,5 +105,19 @@ fun CreateEditAlarmContent(
                 DangerZoneSection(onDeleteClick = onDeleteClick)
             }
         }
+    }
+}
+
+@DevicePreview
+@Composable
+private fun CreateEditAlarmContentPreview() {
+    AlarmAppComposeTheme {
+        CreateEditAlarmContent(
+            uiState = CreateEditAlarmUiState(),
+            onEvent = {},
+            onCloseClick = {},
+            onSaveClick = {},
+            onDeleteClick = {},
+        )
     }
 }

@@ -1,18 +1,17 @@
 package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components
 
+import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Label
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +50,7 @@ fun AlarmSettingsSection(
             .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
     ) {
         SettingsItem(
-            icon = Icons.Default.Label,
+            iconResId = R.drawable.ic_label,
             title = stringResource(R.string.alarm_label),
             subtitle = label,
             onClick = onLabelClick
@@ -63,10 +62,10 @@ fun AlarmSettingsSection(
             modifier = Modifier.clickable(onClick = onSoundClick)
         ) {
             SettingsItemContent(
-                icon = Icons.Default.MusicNote,
+                iconResId = R.drawable.ic_music,
                 title = stringResource(R.string.sound),
                 subtitle = soundUriName ?: stringResource(R.string.default_sound),
-                showChevron = true
+                showMoreButton = true
             )
             
             Row(
@@ -98,7 +97,7 @@ fun AlarmSettingsSection(
         Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         
         SettingsItem(
-            icon = Icons.Default.Vibration,
+            iconResId = R.drawable.ic_vibration,
             title = stringResource(R.string.vibration_pattern),
             subtitle = vibrationPattern.displayName,
             onClick = onVibrationClick
@@ -108,7 +107,8 @@ fun AlarmSettingsSection(
 
 @Composable
 private fun SettingsItem(
-    icon: ImageVector,
+    @DrawableRes
+    iconResId: Int,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
@@ -116,21 +116,22 @@ private fun SettingsItem(
 ) {
     Box(modifier = modifier.clickable(onClick = onClick)) {
         SettingsItemContent(
-            icon = icon,
+            iconResId = iconResId,
             title = title,
             subtitle = subtitle,
-            showChevron = true
+            showMoreButton = true
         )
     }
 }
 
 @Composable
 private fun SettingsItemContent(
-    icon: ImageVector,
+    @DrawableRes
+    iconResId: Int,
     title: String,
     subtitle: String,
-    showChevron: Boolean = false,
-    modifier: Modifier = Modifier
+    showMoreButton: Boolean = false,
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -144,7 +145,7 @@ private fun SettingsItemContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = icon,
+                painter = painterResource(iconResId),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -163,9 +164,9 @@ private fun SettingsItemContent(
             }
         }
         
-        if (showChevron) {
+        if (showMoreButton) {
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                painter = painterResource(R.drawable.ic_more),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )

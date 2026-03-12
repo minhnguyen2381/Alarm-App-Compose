@@ -22,7 +22,7 @@ private val LightColorPalette = lightColorScheme(
 )
 
 @Composable
-fun JetpackComposeBoilerplateTheme(
+fun AlarmAppComposeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

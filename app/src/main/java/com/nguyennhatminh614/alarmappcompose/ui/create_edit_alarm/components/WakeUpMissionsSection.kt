@@ -1,5 +1,6 @@
 package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,10 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,7 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,7 +75,7 @@ fun WakeUpMissionsSection(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             MissionButton(
-                icon = Icons.Default.Calculate,
+                iconResId = R.drawable.ic_math,
                 label = WakeUpMission.MATH.displayName,
                 isSelected = currentMission == WakeUpMission.MATH,
                 onClick = { onMissionChanged(WakeUpMission.MATH) },
@@ -84,7 +83,7 @@ fun WakeUpMissionsSection(
             )
             
             MissionButton(
-                icon = Icons.Default.Vibration,
+                iconResId = R.drawable.ic_vibration,
                 label = WakeUpMission.SHAKE.displayName,
                 isSelected = currentMission == WakeUpMission.SHAKE,
                 onClick = { onMissionChanged(WakeUpMission.SHAKE) },
@@ -92,7 +91,7 @@ fun WakeUpMissionsSection(
             )
             
             MissionButton(
-                icon = Icons.Default.QrCodeScanner,
+                iconResId = R.drawable.ic_qr_code,
                 label = WakeUpMission.QR_CODE.displayName,
                 isSelected = currentMission == WakeUpMission.QR_CODE,
                 onClick = { onMissionChanged(WakeUpMission.QR_CODE) },
@@ -130,7 +129,8 @@ fun WakeUpMissionsSection(
 
 @Composable
 private fun MissionButton(
-    icon: ImageVector,
+    @DrawableRes
+    iconResId: Int,
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
@@ -145,7 +145,7 @@ private fun MissionButton(
             )
             .border(
                 width = 2.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.transparent,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable(onClick = onClick)
@@ -154,7 +154,7 @@ private fun MissionButton(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            imageVector = icon,
+            painter = painterResource(iconResId),
             contentDescription = label,
             tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
         )
