@@ -20,7 +20,7 @@ object DatabaseModule {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "Users"
+            "AlarmAppCompose"
         ).fallbackToDestructiveMigration().build()
     }
 
@@ -28,5 +28,8 @@ object DatabaseModule {
     fun provideChannelDao(appDatabase: AppDatabase): UsersDao {
         return appDatabase.usersDao
     }
-
+    @Provides
+    fun provideAlarmsDao(appDatabase: AppDatabase): com.nguyennhatminh614.alarmappcompose.database.AlarmsDao {
+        return appDatabase.alarmsDao
+    }
 }
