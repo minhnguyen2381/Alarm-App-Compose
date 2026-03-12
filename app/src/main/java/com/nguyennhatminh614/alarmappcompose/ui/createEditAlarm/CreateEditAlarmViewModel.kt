@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm
+package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

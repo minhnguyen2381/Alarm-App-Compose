@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components
+package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background

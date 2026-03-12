@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm
+package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,16 +12,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.AlarmSettingsSection
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.CreateEditAlarmTopBar
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.DangerZoneSection
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.RepeatSection
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.TimePickerSection
-import com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components.WakeUpMissionsSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.AlarmSettingsSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.CreateEditAlarmTopBar
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.DangerZoneSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.RepeatSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.TimePickerSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.WakeUpMissionsSection
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 

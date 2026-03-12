@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components
+package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme

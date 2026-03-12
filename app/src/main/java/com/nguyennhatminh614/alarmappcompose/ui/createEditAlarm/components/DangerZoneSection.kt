@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.create_edit_alarm.components
+package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
