@@ -1,8 +1,8 @@
 package com.nguyennhatminh614.alarmappcompose.repository
 
-import com.nguyennhatminh614.alarmappcompose.database.AlarmsDao
-import com.nguyennhatminh614.alarmappcompose.database.toDomainModel
-import com.nguyennhatminh614.alarmappcompose.database.toEntity
+import com.nguyennhatminh614.alarmappcompose.database.dao.AlarmsDao
+import com.nguyennhatminh614.alarmappcompose.database.entity.toDomainModel
+import com.nguyennhatminh614.alarmappcompose.database.entity.toEntity
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.repository.AlarmRepository
 import kotlinx.coroutines.flow.Flow

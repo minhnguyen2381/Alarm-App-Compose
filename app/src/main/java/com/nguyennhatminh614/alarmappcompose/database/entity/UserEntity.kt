@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.database
+package com.nguyennhatminh614.alarmappcompose.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

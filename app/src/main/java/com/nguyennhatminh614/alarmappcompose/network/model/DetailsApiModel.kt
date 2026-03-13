@@ -1,7 +1,7 @@
 package com.nguyennhatminh614.alarmappcompose.network.model
 
 
-import com.nguyennhatminh614.alarmappcompose.database.DetailsEntity
+import com.nguyennhatminh614.alarmappcompose.database.entity.DetailsEntity
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

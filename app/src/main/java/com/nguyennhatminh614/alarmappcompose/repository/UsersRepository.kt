@@ -1,7 +1,7 @@
 package com.nguyennhatminh614.alarmappcompose.repository
 
 import com.nguyennhatminh614.alarmappcompose.database.AppDatabase
-import com.nguyennhatminh614.alarmappcompose.database.asDomainModel
+import com.nguyennhatminh614.alarmappcompose.database.entity.asDomainModel
 import com.nguyennhatminh614.alarmappcompose.domain.User
 import com.nguyennhatminh614.alarmappcompose.network.UsersApi
 import com.nguyennhatminh614.alarmappcompose.network.model.asDatabaseModel
