@@ -1,5 +1,6 @@
 package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,7 +54,8 @@ fun CreateEditAlarmContent(
     onCloseClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -70,7 +72,7 @@ fun CreateEditAlarmContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
