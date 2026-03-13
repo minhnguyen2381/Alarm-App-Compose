@@ -39,18 +39,4 @@ class AlarmsViewModel @Inject constructor(
         }
     }
 
-    // Mock functionality for creating an alarm temporarily
-    fun onAddMockAlarm() {
-        viewModelScope.launch {
-            val randomId = java.util.UUID.randomUUID().toString()
-            val newAlarm = Alarm(
-                id = randomId,
-                time = "07:00",
-                label = "New Alarm",
-                isEnabled = true,
-                repeatDays = persistentListOf()
-            )
-            useCases.addAlarm(newAlarm)
-        }
-    }
 }
