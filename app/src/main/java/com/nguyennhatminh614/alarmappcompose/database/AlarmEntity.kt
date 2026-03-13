@@ -17,6 +17,7 @@ data class AlarmEntity(
     val isEnabled: Boolean,
     val repeatDays: String, // Lưu trữ dưới dạng chuỗi (ví dụ: "MONDAY,TUESDAY")
     val soundUri: String? = null,
+    val soundName: String? = null,
     val isFadeInSound: Boolean = false,
     val vibrationPattern: String = "DEFAULT",
     val wakeUpMission: String = "NONE"
@@ -36,6 +37,7 @@ fun AlarmEntity.toDomainModel(): Alarm {
         isEnabled = isEnabled,
         repeatDays = days,
         soundUri = soundUri,
+        soundName = soundName,
         isFadeInSound = isFadeInSound,
         vibrationPattern = try {
             VibrationPattern.valueOf(vibrationPattern)
@@ -58,6 +60,7 @@ fun Alarm.toEntity(): AlarmEntity {
         isEnabled = isEnabled,
         repeatDays = repeatDays.joinToString(",") { it.name },
         soundUri = soundUri,
+        soundName = soundName,
         isFadeInSound = isFadeInSound,
         vibrationPattern = vibrationPattern.name,
         wakeUpMission = wakeUpMission.name

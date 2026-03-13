@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,9 +29,24 @@ import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 @Composable
 fun CreateEditAlarmScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSoundPicker: (currentSoundUri: String?) -> Unit = {},
+    selectedSoundUri: String? = null,
+    selectedSoundName: String? = null,
 ) {
     val viewModel: CreateEditAlarmViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Apply returned sound selection from SoundPicker
+    LaunchedEffect(selectedSoundUri, selectedSoundName) {
+        if (selectedSoundUri != null && selectedSoundName != null) {
+            viewModel.onEvent(
+                CreateEditAlarmEvent.SoundChanged(
+                    uri = selectedSoundUri,
+                    name = selectedSoundName
+                )
+            )
+        }
+    }
 
     CreateEditAlarmContent(
         uiState = uiState,
@@ -43,7 +59,8 @@ fun CreateEditAlarmScreen(
         onDeleteClick = {
             viewModel.onEvent(CreateEditAlarmEvent.DeleteAlarm)
             onNavigateBack()
-        }
+        },
+        onSoundClick = { onNavigateToSoundPicker(uiState.soundUri) }
     )
 }
 
@@ -54,6 +71,7 @@ fun CreateEditAlarmContent(
     onCloseClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onSoundClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
 ) {
@@ -89,8 +107,8 @@ fun CreateEditAlarmContent(
             AlarmSettingsSection(
                 label = uiState.label,
                 onLabelClick = { /* TODO: Show dialog to edit label */ },
-                soundUriName = uiState.soundUri,
-                onSoundClick = { /* TODO: Navigate to Sound picker */ },
+                soundUriName = uiState.soundName ?: uiState.soundUri,
+                onSoundClick = onSoundClick,
                 isFadeInSound = uiState.isFadeInSound,
                 onFadeInSoundToggled = { onEvent(CreateEditAlarmEvent.FadeInSoundToggled(it)) },
                 vibrationPattern = uiState.vibrationPattern,

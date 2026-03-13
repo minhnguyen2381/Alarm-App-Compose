@@ -24,10 +24,11 @@ import kotlinx.collections.immutable.toImmutableList
 @Immutable
 data class CreateEditAlarmUiState(
     val initialAlarmId: String? = null,
-    val time: String = "07:30", // Default from mock
+    val time: String = "07:30",
     val label: String = "Wake up for work",
-    val repeatDays: ImmutableList<DayOfWeek> = persistentListOf(), // T, W, T, F is checked from mock 
-    val soundUri: String? = "Morning Breeze (Gentle)", // Mocked title for now
+    val repeatDays: ImmutableList<DayOfWeek> = persistentListOf(),
+    val soundUri: String? = null,
+    val soundName: String? = null,
     val isFadeInSound: Boolean = false,
     val vibrationPattern: VibrationPattern = VibrationPattern.HEARTBEAT,
     val wakeUpMission: WakeUpMission = WakeUpMission.MATH,
@@ -38,12 +39,12 @@ sealed interface CreateEditAlarmEvent {
     data class TimeChanged(val time: String) : CreateEditAlarmEvent
     data class LabelChanged(val label: String) : CreateEditAlarmEvent
     data class RepeatDayToggled(val day: DayOfWeek) : CreateEditAlarmEvent
-    data class SoundUriChanged(val uri: String?) : CreateEditAlarmEvent
+    data class SoundChanged(val uri: String?, val name: String?) : CreateEditAlarmEvent
     data class FadeInSoundToggled(val fade: Boolean) : CreateEditAlarmEvent
     data class VibrationPatternChanged(val pattern: VibrationPattern) : CreateEditAlarmEvent
     data class WakeUpMissionChanged(val mission: WakeUpMission) : CreateEditAlarmEvent
-    object SaveAlarm : CreateEditAlarmEvent
-    object DeleteAlarm : CreateEditAlarmEvent
+    data object SaveAlarm : CreateEditAlarmEvent
+    data object DeleteAlarm : CreateEditAlarmEvent
 }
 
 @HiltViewModel
@@ -73,8 +74,8 @@ class CreateEditAlarmViewModel @Inject constructor(
                     state.copy(repeatDays = currentDays.toImmutableList())
                 }
             }
-            is CreateEditAlarmEvent.SoundUriChanged -> {
-                _uiState.update { it.copy(soundUri = event.uri) }
+            is CreateEditAlarmEvent.SoundChanged -> {
+                _uiState.update { it.copy(soundUri = event.uri, soundName = event.name) }
             }
             is CreateEditAlarmEvent.FadeInSoundToggled -> {
                 _uiState.update { it.copy(isFadeInSound = event.fade) }
@@ -104,11 +105,12 @@ class CreateEditAlarmViewModel @Inject constructor(
             isEnabled = true,
             repeatDays = state.repeatDays,
             soundUri = state.soundUri,
+            soundName = state.soundName,
             isFadeInSound = state.isFadeInSound,
             vibrationPattern = state.vibrationPattern,
             wakeUpMission = state.wakeUpMission
         )
-        
+
         viewModelScope.launch(Dispatchers.IO) {
             alarmUseCases.addAlarm(alarm)
         }
@@ -125,6 +127,7 @@ class CreateEditAlarmViewModel @Inject constructor(
                     isEnabled = true,
                     repeatDays = state.repeatDays,
                     soundUri = state.soundUri,
+                    soundName = state.soundName,
                     isFadeInSound = state.isFadeInSound,
                     vibrationPattern = state.vibrationPattern,
                     wakeUpMission = state.wakeUpMission

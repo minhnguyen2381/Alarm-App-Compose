@@ -35,4 +35,16 @@
     <string name="alarm_ring_qr_subtitle">Scan the QR code to turn off</string>
     <string name="alarm_ring_mission_counter" translatable="false">%1$d/%2$d</string>
     <string name="alarm_ring_default_label">Alarm</string>
+
+    <!-- Sound Picker -->
+    <string name="sound_picker_title">Sound</string>
+    <string name="search_sounds">Search sounds</string>
+    <string name="files_on_device">FILES ON DEVICE</string>
+    <string name="browse_folders">Browse folders</string>
+    <string name="browse_folders_subtitle">MP3, WAV, OGG files</string>
+    <string name="system_ringtones">SYSTEM RINGTONES</string>
+    <string name="device_audio">DEVICE AUDIO</string>
+    <string name="default_text">Default</string>
+    <string name="audio_permission_rationale">Permission is needed to browse audio files on your device</string>
+    <string name="grant_permission">Grant Permission</string>
 </resources>
