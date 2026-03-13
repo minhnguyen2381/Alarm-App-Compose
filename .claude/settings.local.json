@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cd \"D:\\\\DuAnCongTyPiontech\\\\Alarm-App-Compose\" && ./gradlew assembleDebug 2>&1)"
+      "WebSearch",
+      "WebFetch(domain:mvnrepository.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:square.github.io)",
+      "WebFetch(domain:developers.google.com)",
+      "WebFetch(domain:central.sonatype.com)",
+      "WebFetch(domain:androidx.tech)"
     ]
   }
 }
