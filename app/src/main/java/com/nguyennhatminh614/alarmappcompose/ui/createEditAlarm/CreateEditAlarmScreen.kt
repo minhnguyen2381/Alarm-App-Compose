@@ -88,13 +88,13 @@ fun CreateEditAlarmContent(
 
             AlarmSettingsSection(
                 label = uiState.label,
-                onLabelClick = { /* Show dialog to edit label */ },
+                onLabelClick = { /* TODO: Show dialog to edit label */ },
                 soundUriName = uiState.soundUri,
-                onSoundClick = { /* Navigate to Sound picker */ },
+                onSoundClick = { /* TODO: Navigate to Sound picker */ },
                 isFadeInSound = uiState.isFadeInSound,
                 onFadeInSoundToggled = { onEvent(CreateEditAlarmEvent.FadeInSoundToggled(it)) },
                 vibrationPattern = uiState.vibrationPattern,
-                onVibrationClick = { /* Show dialog to pick vibration pattern */ }
+                onVibrationClick = { /* TODO: Show dialog to pick vibration pattern */ }
             )
 
             WakeUpMissionsSection(
