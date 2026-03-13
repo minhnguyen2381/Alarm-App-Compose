@@ -11,6 +11,7 @@ data class Alarm(
     val isEnabled: Boolean,
     val repeatDays: ImmutableList<DayOfWeek>,
     val soundUri: String? = null,
+    val soundName: String? = null,
     val isFadeInSound: Boolean = false,
     val vibrationPattern: VibrationPattern = VibrationPattern.DEFAULT,
     val wakeUpMission: WakeUpMission = WakeUpMission.NONE
