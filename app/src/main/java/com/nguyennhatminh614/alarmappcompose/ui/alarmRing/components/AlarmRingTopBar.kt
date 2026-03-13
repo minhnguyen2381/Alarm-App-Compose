@@ -22,10 +22,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingAccent
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingChipBg
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnBackground
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnSurface
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingChipBg
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnSurface
 
 @Composable
 fun AlarmRingTopBar(

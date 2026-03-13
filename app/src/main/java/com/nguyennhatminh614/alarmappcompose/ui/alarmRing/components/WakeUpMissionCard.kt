@@ -27,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nguyennhatminh614.alarmappcompose.R
 import com.nguyennhatminh614.alarmappcompose.domain.model.WakeUpMission
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingAccent
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingAccentDim
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnBackground
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnSurface
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingSurface
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingAccent
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingAccentDim
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnSurface
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSurface
 
 @Composable
 fun WakeUpMissionCard(

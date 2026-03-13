@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingAccent
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnBackground
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnSurface
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingAccent
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnSurface
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

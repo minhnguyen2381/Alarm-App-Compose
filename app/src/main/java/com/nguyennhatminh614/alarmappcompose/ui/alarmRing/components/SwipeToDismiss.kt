@@ -34,10 +34,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nguyennhatminh614.alarmappcompose.R
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingAccent
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnBackground
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingSwipeHandle
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingSwipeTrack
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingAccent
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSwipeHandle
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSwipeTrack
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

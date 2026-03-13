@@ -21,8 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nguyennhatminh614.alarmappcompose.R
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingOnBackground
-import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingSnoozeButtonColor
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSnoozeButtonColor
 import kotlinx.coroutines.delay
 
 @Composable
