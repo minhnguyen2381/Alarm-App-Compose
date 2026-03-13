@@ -6,25 +6,32 @@ import androidx.navigation.compose.rememberNavController
 
 import androidx.navigation.compose.composable
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.AlarmsScreenRoute
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.CreateEditAlarmScreen
 
 @Composable
 fun ComposeApp() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = Route.ALARM
+        startDestination = Route.LIST_ALARM
     ) {
-        composable(Route.ALARM) {
+        composable(Route.LIST_ALARM) {
             AlarmsScreenRoute()
+        }
+
+        composable(Route.CREATE_EDIT_ALARM) {
+            CreateEditAlarmScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
 
 object Route {
-    const val CAMERA = "camera"
-    const val USER = "user"
-    const val DETAIL = "detail"
-    const val ALARM = "alarm"
+    const val LIST_ALARM = "alarm"
+    const val CREATE_EDIT_ALARM = "create_edit_alarm"
 }
 
 object Argument {

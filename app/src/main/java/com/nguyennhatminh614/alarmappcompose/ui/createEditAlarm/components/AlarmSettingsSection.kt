@@ -1,6 +1,5 @@
 package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
-import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,7 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -33,12 +32,12 @@ import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 @Composable
 fun AlarmSettingsSection(
     label: String,
-    onLabelClick: () -> Unit,
     soundUriName: String?,
-    onSoundClick: () -> Unit,
     isFadeInSound: Boolean,
     onFadeInSoundToggled: (Boolean) -> Unit,
     vibrationPattern: VibrationPattern,
+    onSoundClick: () -> Unit,
+    onLabelClick: () -> Unit,
     onVibrationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,8 +53,8 @@ fun AlarmSettingsSection(
             subtitle = label,
             onClick = onLabelClick
         )
-        
-        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         
         Column(
             modifier = Modifier.clickable(onClick = onSoundClick)
@@ -92,8 +91,8 @@ fun AlarmSettingsSection(
                 )
             }
         }
-        
-        Divider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
         
         SettingsItem(
             iconResId = R.drawable.ic_vibration,
@@ -125,12 +124,12 @@ private fun SettingsItem(
 
 @Composable
 private fun SettingsItemContent(
+    modifier: Modifier = Modifier,
     @DrawableRes
     iconResId: Int,
     title: String,
     subtitle: String,
-    showMoreButton: Boolean = false,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
+    showMoreButton: Boolean = false
 ) {
     Row(
         modifier = modifier

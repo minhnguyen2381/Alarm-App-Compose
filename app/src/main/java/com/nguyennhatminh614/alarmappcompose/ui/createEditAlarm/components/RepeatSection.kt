@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.sp
 import com.nguyennhatminh614.alarmappcompose.R
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RepeatSection(
-    selectedDays: List<DayOfWeek>,
+    selectedDays: ImmutableList<DayOfWeek>,
     onDayToggled: (DayOfWeek) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -50,7 +52,7 @@ fun RepeatSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            DayOfWeek.values().forEach { day ->
+            DayOfWeek.entries.forEach { day ->
                 val isSelected = selectedDays.contains(day)
                 DayButton(
                     day = day,
@@ -98,7 +100,7 @@ private fun DayButton(
 private fun RepeatSectionPreview() {
     AlarmAppComposeTheme {
         RepeatSection(
-            selectedDays = listOf(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
+            selectedDays = persistentListOf(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
             onDayToggled = {}
         )
     }
