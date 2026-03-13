@@ -7,14 +7,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun AlarmsScreenRoute(
+    onNavigateToCreateAlarm: () -> Unit,
     viewModel: AlarmsViewModel = hiltViewModel(),
-    // Các navigate handlers nếu có: onNavigateToDetail...
 ) {
     val alarms by viewModel.alarms.collectAsStateWithLifecycle()
 
     AlarmsScreen(
         alarms = alarms,
         onToggleAlarm = viewModel::onToggleAlarm,
-        onAddAlarmClick = viewModel::onAddMockAlarm
+        onAddAlarmClick = onNavigateToCreateAlarm
     )
 }

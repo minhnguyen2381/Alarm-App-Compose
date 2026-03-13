@@ -47,3 +47,17 @@ Single `NavHost` in `ComposeApp.kt`. Routes are constants on the `Route` object.
 
 ## Compose Compiler Reports
 Enabled in `app/build.gradle` — reports are generated to `build/compose_metrics/`. Use these to audit recomposition stability when adding new state or models.
+
+## Jetpack Compose Expert
+For all Jetpack Compose tasks, follow the workflow and checklists in
+1. `jetpack-compose-expert-skill/SKILL.md`.
+2. `custom-compose-skill/custom-compose-skill.md`.
+
+Before answering any Compose question, consult the relevant reference:
+- State management -> `jetpack-compose-expert-skill/references/state-management.md`
+- Performance -> `jetpack-compose-expert-skill/references/performance.md`
+- Navigation -> `jetpack-compose-expert-skill/references/navigation.md`
+- (see SKILL.md for the full topic -> file mapping)
+
+For implementation details, check actual source code in
+`jetpack-compose-expert-skill/references/source-code/`.

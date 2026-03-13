@@ -23,4 +23,16 @@
     <string name="math_mission_info">Solve 3 math problems (Medium difficulty) to turn off the alarm. This ensures your brain is fully awake.</string>
     <string name="delete_alarm">Delete Alarm</string>
     <string name="alarms">Alarms</string>
+    <string name="snooze">Snooze</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="alarm_ring_swipe_to_turn_off">SWIPE TO TURN OFF</string>
+    <string name="alarm_ring_snooze_format">Snooze (%1$s)</string>
+    <string name="alarm_ring_math_mission">MATH MISSION</string>
+    <string name="alarm_ring_shake_mission">SHAKE MISSION</string>
+    <string name="alarm_ring_qr_code_mission">QR CODE MISSION</string>
+    <string name="alarm_ring_math_subtitle">Solve %1$d problems to turn off</string>
+    <string name="alarm_ring_shake_subtitle">Shake your phone %1$d times</string>
+    <string name="alarm_ring_qr_subtitle">Scan the QR code to turn off</string>
+    <string name="alarm_ring_mission_counter" translatable="false">%1$d/%2$d</string>
+    <string name="alarm_ring_default_label">Alarm</string>
 </resources>

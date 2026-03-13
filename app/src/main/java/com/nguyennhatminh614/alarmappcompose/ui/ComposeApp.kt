@@ -16,7 +16,11 @@ fun ComposeApp() {
         startDestination = Route.LIST_ALARM
     ) {
         composable(Route.LIST_ALARM) {
-            AlarmsScreenRoute()
+            AlarmsScreenRoute(
+                onNavigateToCreateAlarm = {
+                    navController.navigate(Route.CREATE_EDIT_ALARM)
+                }
+            )
         }
 
         composable(Route.CREATE_EDIT_ALARM) {
