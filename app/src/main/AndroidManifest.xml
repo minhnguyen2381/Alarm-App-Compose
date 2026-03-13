@@ -53,12 +53,12 @@
 
         <!-- Alarm BroadcastReceiver -->
         <receiver
-            android:name=".service.AlarmReceiver"
+            android:name=".receiver.AlarmReceiver"
             android:exported="false" />
 
         <!-- Boot BroadcastReceiver -->
         <receiver
-            android:name=".service.BootReceiver"
+            android:name=".receiver.BootReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

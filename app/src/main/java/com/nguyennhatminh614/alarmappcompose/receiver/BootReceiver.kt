@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.service
+package com.nguyennhatminh614.alarmappcompose.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

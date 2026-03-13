@@ -8,6 +8,7 @@ import android.os.Build
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.domain.scheduler.AlarmScheduler
+import com.nguyennhatminh614.alarmappcompose.receiver.AlarmReceiver
 import java.util.Calendar
 import javax.inject.Inject
 
