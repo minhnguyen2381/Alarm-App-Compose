@@ -1,6 +1,5 @@
 package com.nguyennhatminh614.alarmappcompose.ui.alarms.components
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,15 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
-import kotlinx.collections.immutable.ImmutableList
+import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 import kotlinx.collections.immutable.persistentListOf
-import okhttp3.internal.toImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import com.nguyennhatminh614.alarmappcompose.R
+
 @Composable
 fun AlarmItem(
     alarm: Alarm,
@@ -99,11 +98,11 @@ fun AlarmItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    val allDays = DayOfWeek.values()
+                    val allDays = DayOfWeek.entries.toTypedArray()
                     val isEveryday = alarm.repeatDays.size == 7
                     if (isEveryday) {
                         Text(
-                            text = "Daily",
+                            text = stringResource(R.string.daily),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = alpha)
                             )
@@ -138,12 +137,13 @@ fun AlarmItem(
 
 // ======================== PREVIEWS ========================
 
-@Preview(name = "Light Mode - Enabled", showBackground = true)
-@Preview(name = "Dark Mode - Enabled", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@DevicePreview
 @Composable
 fun AlarmItemPreviewEnabled() {
     MaterialTheme {
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background).padding(16.dp)) {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)) {
             AlarmItem(
                 alarm = Alarm(
                     id = "1",
@@ -161,18 +161,24 @@ fun AlarmItemPreviewEnabled() {
     }
 }
 
-@Preview(name = "Dark Mode - Disabled", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@DevicePreview
 @Composable
 fun AlarmItemPreviewDisabled() {
     MaterialTheme {
-        Box(modifier = Modifier.background(MaterialTheme.colorScheme.background).padding(16.dp)) {
+        val repeatDays = persistentListOf(
+            DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY
+        )
+        Box(modifier = Modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(16.dp)) {
             AlarmItem(
                 alarm = Alarm(
                     id = "2",
                     time = "06:45",
                     label = "Wake Up",
                     isEnabled = false,
-                    repeatDays = DayOfWeek.entries.toList().toImmutableList() as ImmutableList<DayOfWeek>
+                    repeatDays = repeatDays
                 ),
                 onToggle = {}
             )
