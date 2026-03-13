@@ -110,5 +110,5 @@ dependencies {
     implementation libs.accompanist.permissions
 
     //==================== Collections ====================
-    implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.7'
+    implementation libs.kotlinx.collections.immutable
 }
