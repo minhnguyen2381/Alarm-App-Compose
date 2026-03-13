@@ -2,7 +2,6 @@ package com.nguyennhatminh614.alarmappcompose.di
 
 import com.nguyennhatminh614.alarmappcompose.BuildConfig
 import com.nguyennhatminh614.alarmappcompose.network.DetailsApi
-import com.nguyennhatminh614.alarmappcompose.network.UsersApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,6 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
+import kotlin.jvm.java
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -38,11 +38,6 @@ object NetworkModule {
         .baseUrl("https://api.github.com/")
         .client(okHttpClient)
         .build()
-
-    @Provides
-    @Singleton
-    fun provideApiService(retrofit: Retrofit): UsersApi =
-        retrofit.create(UsersApi::class.java)
 
     @Provides
     @Singleton
