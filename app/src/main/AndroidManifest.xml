@@ -39,7 +39,7 @@
 
         <!-- Alarm Ring Activity -->
         <activity
-            android:name=".ui.alarm_ring.AlarmRingActivity"
+            android:name=".ui.alarmRing.AlarmRingActivity"
             android:exported="false"
             android:showOnLockScreen="true"
             android:turnScreenOn="true"

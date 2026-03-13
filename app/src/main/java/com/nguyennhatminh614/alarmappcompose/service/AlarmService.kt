@@ -21,7 +21,7 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.VibrationPattern
 import com.nguyennhatminh614.alarmappcompose.domain.scheduler.AlarmScheduler
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.AlarmUseCases
-import com.nguyennhatminh614.alarmappcompose.ui.alarm_ring.AlarmRingActivity
+import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

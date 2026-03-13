@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.ui.alarm_ring
+package com.nguyennhatminh614.alarmappcompose.ui.alarmRing
 
 import android.content.Intent
 import android.os.Build
