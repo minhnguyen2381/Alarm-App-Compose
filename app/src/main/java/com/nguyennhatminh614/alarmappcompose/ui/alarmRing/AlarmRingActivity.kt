@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -34,6 +35,7 @@ class AlarmRingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
         setupScreenWake()
 
         val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID)
@@ -50,6 +52,7 @@ class AlarmRingActivity : ComponentActivity() {
             AlarmAppComposeTheme {
                 AlarmRingScreen(
                     alarm = alarm,
+                    snoozeDurationMinutes = AlarmService.SNOOZE_DURATION_MINUTES,
                     onDismiss = {
                         sendServiceAction(AlarmService.ACTION_DISMISS)
                         finish()
