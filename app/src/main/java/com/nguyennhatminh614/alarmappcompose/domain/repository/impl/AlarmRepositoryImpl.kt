@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.repository
+package com.nguyennhatminh614.alarmappcompose.domain.repository.impl
 
 import com.nguyennhatminh614.alarmappcompose.database.dao.AlarmsDao
 import com.nguyennhatminh614.alarmappcompose.database.entity.toDomainModel

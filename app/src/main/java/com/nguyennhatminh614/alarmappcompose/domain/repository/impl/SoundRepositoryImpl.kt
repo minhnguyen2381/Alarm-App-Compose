@@ -1,4 +1,4 @@
-package com.nguyennhatminh614.alarmappcompose.repository
+package com.nguyennhatminh614.alarmappcompose.domain.repository.impl
 
 import android.content.ContentUris
 import android.content.Context
