@@ -51,7 +51,7 @@ Enabled in `app/build.gradle` — reports are generated to `build/compose_metric
 ## Jetpack Compose Expert
 For all Jetpack Compose tasks, follow the workflow and checklists in
 1. `jetpack-compose-expert-skill/SKILL.md`.
-2. `custom-compose-skill/custom-compose-skill.md`.
+2. `custom-compose-skill/SKILL.md`.
 
 Before answering any Compose question, consult the relevant reference:
 - State management -> `jetpack-compose-expert-skill/references/state-management.md`
