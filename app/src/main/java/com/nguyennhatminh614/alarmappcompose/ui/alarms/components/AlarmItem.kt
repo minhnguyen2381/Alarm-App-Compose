@@ -22,6 +22,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -109,15 +110,17 @@ fun AlarmItem(
                         )
                     } else {
                         allDays.forEach { day ->
-                            val isSelected = alarm.repeatDays.contains(day)
-                            Text(
-                                text = day.shortName,
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = alpha)
-                                    else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f * alpha)
+                            key(day) {
+                                val isSelected = alarm.repeatDays.contains(day)
+                                Text(
+                                    text = day.shortName,
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = alpha)
+                                        else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f * alpha)
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
