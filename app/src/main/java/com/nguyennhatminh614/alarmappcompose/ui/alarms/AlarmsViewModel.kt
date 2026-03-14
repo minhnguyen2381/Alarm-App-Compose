@@ -39,6 +39,9 @@ class AlarmsViewModel @Inject constructor(
     private val _canScheduleExactAlarms = MutableStateFlow(true)
     val canScheduleExactAlarms: StateFlow<Boolean> = _canScheduleExactAlarms.asStateFlow()
 
+    private val _canDrawOverlays = MutableStateFlow(true)
+    val canDrawOverlays: StateFlow<Boolean> = _canDrawOverlays.asStateFlow()
+
     val exceedMaxDenyCount: StateFlow<Boolean> = dataStoreRepository.getAlarmPermissionDenyCount()
         .map { it >= MAX_IN_APP_DENY_COUNT }
         .stateIn(
@@ -49,6 +52,10 @@ class AlarmsViewModel @Inject constructor(
 
     fun updateCanScheduleExactAlarms(canSchedule: Boolean) {
         _canScheduleExactAlarms.value = canSchedule
+    }
+
+    fun updateCanDrawOverlays(canDraw: Boolean) {
+        _canDrawOverlays.value = canDraw
     }
 
     fun onPermissionDenied() {

@@ -31,6 +31,7 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.ExactAlarmPermissionBanner
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.NextAlarmBanner
+import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.OverlayPermissionBanner
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.SwipeableAlarmItem
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 import kotlinx.collections.immutable.ImmutableList
@@ -44,6 +45,8 @@ fun AlarmsScreen(
     showPermissionBanner: Boolean,
     shouldOpenSettings: Boolean,
     onGrantPermissionClick: () -> Unit,
+    showOverlayPermissionBanner: Boolean,
+    onGrantOverlayPermissionClick: () -> Unit,
     onToggleAlarm: (Alarm, Boolean) -> Unit,
     onDeleteAlarm: (Alarm) -> Unit,
     onAlarmClick: (Alarm) -> Unit,
@@ -97,6 +100,15 @@ fun AlarmsScreen(
                         ExactAlarmPermissionBanner(
                             shouldOpenSettings = shouldOpenSettings,
                             onGrantClick = onGrantPermissionClick,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                        )
+                    }
+                }
+
+                if (showOverlayPermissionBanner) {
+                    item(key = "overlay_permission_banner") {
+                        OverlayPermissionBanner(
+                            onGrantClick = onGrantOverlayPermissionClick,
                             modifier = Modifier.padding(bottom = 8.dp),
                         )
                     }
@@ -171,6 +183,8 @@ fun AlarmsScreenPreview(
             showPermissionBanner = true,
             shouldOpenSettings = false,
             onGrantPermissionClick = {},
+            showOverlayPermissionBanner = false,
+            onGrantOverlayPermissionClick = {},
             onToggleAlarm = { _, _ -> },
             onDeleteAlarm = {},
             onAlarmClick = {},
@@ -188,6 +202,8 @@ fun AlarmsScreenPermissionSettingsPreview() {
             showPermissionBanner = true,
             shouldOpenSettings = true,
             onGrantPermissionClick = {},
+            showOverlayPermissionBanner = true,
+            onGrantOverlayPermissionClick = {},
             onToggleAlarm = { _, _ -> },
             onDeleteAlarm = {},
             onAlarmClick = {},

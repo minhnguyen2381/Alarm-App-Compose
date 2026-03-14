@@ -12,6 +12,7 @@ import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -32,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -55,6 +57,7 @@ class AlarmService : Service() {
 
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
+    private var wakeLock: PowerManager.WakeLock? = null
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var currentAlarmId: String? = null
 
@@ -104,8 +107,15 @@ class AlarmService : Service() {
         }
 
         // Check if battery optimization is on
-        val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         Log.d(TAG, "isIgnoringBatteryOptimizations=${pm.isIgnoringBatteryOptimizations(packageName)}")
+
+        // Check SYSTEM_ALERT_WINDOW permission
+        val canDrawOverlays = Settings.canDrawOverlays(this)
+        Log.d(TAG, "canDrawOverlays()=$canDrawOverlays")
+        if (!canDrawOverlays) {
+            Log.w(TAG, "SYSTEM_ALERT_WINDOW not granted - falling back to full-screen intent only")
+        }
 
         Log.d(TAG, "=== DIAGNOSTIC INFO END ===")
     }
@@ -143,6 +153,20 @@ class AlarmService : Service() {
             Log.e(TAG, "onStartCommand() startForeground FAILED: ${e.message}", e)
         }
 
+        // Acquire WakeLock to keep CPU awake during activity launch
+        try {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "AlarmApp::AlarmServiceWakeLock"
+            ).apply {
+                acquire(60 * 1000L) // 60 second timeout as safety net
+            }
+            Log.d(TAG, "onStartCommand() WakeLock acquired")
+        } catch (e: Exception) {
+            Log.e(TAG, "onStartCommand() WakeLock acquire FAILED: ${e.message}", e)
+        }
+
         serviceScope.launch {
             val alarm = alarmUseCases.getAlarmById(alarmId)
             Log.d(TAG, "onStartCommand() loaded alarm=$alarm")
@@ -154,6 +178,27 @@ class AlarmService : Service() {
                     Log.d(TAG, "onStartCommand() full-screen notification posted")
                 } catch (e: Exception) {
                     Log.e(TAG, "onStartCommand() full-screen notification FAILED: ${e.message}", e)
+                }
+
+                // Direct launch of AlarmRingActivity (primary mechanism)
+                // Full-screen notification remains as fallback
+                withContext(Dispatchers.Main) {
+                    try {
+                        val activityIntent = Intent(this@AlarmService, AlarmRingActivity::class.java).apply {
+                            putExtra(AlarmRingActivity.EXTRA_ALARM_ID, alarm.id)
+                            addFlags(
+                                Intent.FLAG_ACTIVITY_NEW_TASK
+                                    or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            )
+                        }
+                        startActivity(activityIntent)
+                        Log.d(TAG, "onStartCommand() startActivity() for AlarmRingActivity SUCCESS")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "onStartCommand() startActivity() FAILED: ${e.message}", e)
+                        // Full-screen notification is already posted as fallback
+                    }
                 }
 
                 startSound(alarm)
@@ -189,6 +234,10 @@ class AlarmService : Service() {
         }
         mediaPlayer = null
         vibrator?.cancel()
+        wakeLock?.let {
+            if (it.isHeld) it.release()
+        }
+        wakeLock = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }

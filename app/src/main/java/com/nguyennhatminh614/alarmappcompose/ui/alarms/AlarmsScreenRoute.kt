@@ -24,10 +24,12 @@ fun AlarmsScreenRoute(
     val alarms by viewModel.alarms.collectAsStateWithLifecycle()
     val canScheduleExactAlarms by viewModel.canScheduleExactAlarms.collectAsStateWithLifecycle()
     val exceedMaxDenyCount by viewModel.exceedMaxDenyCount.collectAsStateWithLifecycle()
+    val canDrawOverlays by viewModel.canDrawOverlays.collectAsStateWithLifecycle()
 
     // Re-check permission every time the screen resumes (e.g. after returning from Settings)
     LifecycleResumeEffect(Unit) {
         viewModel.updateCanScheduleExactAlarms(checkCanScheduleExactAlarms(context))
+        viewModel.updateCanDrawOverlays(checkCanDrawOverlays(context))
         onPauseOrDispose {}
     }
 
@@ -43,6 +45,8 @@ fun AlarmsScreenRoute(
                 viewModel.onPermissionDenied()
             }
         },
+        showOverlayPermissionBanner = !canDrawOverlays,
+        onGrantOverlayPermissionClick = { openOverlaySettings(context) },
         onToggleAlarm = viewModel::onToggleAlarm,
         onDeleteAlarm = viewModel::onDeleteAlarm,
         onAlarmClick = onNavigateToEditAlarm,
@@ -74,4 +78,18 @@ private fun openExactAlarmSettings(context: Context) {
         }
         context.startActivity(intent)
     }
+}
+
+private fun checkCanDrawOverlays(context: Context): Boolean {
+    return Settings.canDrawOverlays(context)
+}
+
+private fun openOverlaySettings(context: Context) {
+    val intent = Intent(
+        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+        Uri.parse("package:${context.packageName}")
+    ).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    context.startActivity(intent)
 }

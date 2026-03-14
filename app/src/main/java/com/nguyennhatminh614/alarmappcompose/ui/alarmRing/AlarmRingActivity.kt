@@ -97,6 +97,14 @@ class AlarmRingActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent() intent=$intent, alarmId=${intent.getStringExtra(EXTRA_ALARM_ID)}")
+        val newAlarmId = intent.getStringExtra(EXTRA_ALARM_ID)
+        if (newAlarmId != null && newAlarmId != this.intent?.getStringExtra(EXTRA_ALARM_ID)) {
+            setIntent(intent)
+            CoroutineScope(Dispatchers.IO).launch {
+                alarm = alarmUseCases.getAlarmById(newAlarmId)
+                Log.d(TAG, "onNewIntent() loaded new alarm from DB: $alarm")
+            }
+        }
     }
 
     override fun onStart() {
