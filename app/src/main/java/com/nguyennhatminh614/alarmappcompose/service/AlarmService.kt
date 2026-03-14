@@ -24,6 +24,8 @@ import com.nguyennhatminh614.alarmappcompose.domain.scheduler.AlarmScheduler
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.AlarmUseCases
 import com.nguyennhatminh614.alarmappcompose.receiver.AlarmReceiver
 import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.AlarmRingActivity
+import android.content.pm.PackageManager
+import android.provider.Settings
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +64,50 @@ class AlarmService : Service() {
         super.onCreate()
         Log.d(TAG, "onCreate()")
         createNotificationChannel()
+        logDiagnosticInfo()
+    }
+
+    private fun logDiagnosticInfo() {
+        Log.d(TAG, "=== DIAGNOSTIC INFO START ===")
+        Log.d(TAG, "Build.VERSION.SDK_INT=${Build.VERSION.SDK_INT}")
+        Log.d(TAG, "Build.MANUFACTURER=${Build.MANUFACTURER}")
+        Log.d(TAG, "Build.MODEL=${Build.MODEL}")
+
+        // Check notification channel status
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val channel = nm.getNotificationChannel(CHANNEL_ID)
+            Log.d(TAG, "NotificationChannel=$CHANNEL_ID exists=${channel != null}")
+            channel?.let {
+                Log.d(TAG, "  importance=${it.importance} (HIGH=4)")
+                Log.d(TAG, "  canShowBadge=${it.canShowBadge()}")
+                Log.d(TAG, "  lockscreenVisibility=${it.lockscreenVisibility}")
+            }
+            Log.d(TAG, "areNotificationsEnabled=${nm.areNotificationsEnabled()}")
+        }
+
+        // Check USE_FULL_SCREEN_INTENT permission (Android 14+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val canFullScreen = nm.canUseFullScreenIntent()
+            Log.w(TAG, "canUseFullScreenIntent()=$canFullScreen (Android 14+ required)")
+            if (!canFullScreen) {
+                Log.e(TAG, "!!! FULL_SCREEN_INTENT permission DENIED - AlarmRingActivity WILL NOT launch !!!")
+                Log.e(TAG, "User must grant USE_FULL_SCREEN_INTENT in Settings > Apps > Special access")
+            }
+        }
+
+        // Check SCHEDULE_EXACT_ALARM permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val am = getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+            Log.d(TAG, "canScheduleExactAlarms()=${am.canScheduleExactAlarms()}")
+        }
+
+        // Check if battery optimization is on
+        val pm = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+        Log.d(TAG, "isIgnoringBatteryOptimizations=${pm.isIgnoringBatteryOptimizations(packageName)}")
+
+        Log.d(TAG, "=== DIAGNOSTIC INFO END ===")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -273,17 +319,33 @@ class AlarmService : Service() {
     }
 
     private fun buildFullScreenNotification(alarm: Alarm): Notification {
+        Log.d(TAG, "buildFullScreenNotification() alarmId=${alarm.id}, label='${alarm.label}'")
+
         // Full-screen intent to launch AlarmRingActivity
         val fullScreenIntent = Intent(this, AlarmRingActivity::class.java).apply {
             putExtra(AlarmRingActivity.EXTRA_ALARM_ID, alarm.id)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
         }
+        Log.d(TAG, "buildFullScreenNotification() fullScreenIntent=$fullScreenIntent")
+        Log.d(TAG, "buildFullScreenNotification() intent.extras=${fullScreenIntent.extras}")
+        Log.d(TAG, "buildFullScreenNotification() intent.flags=0x${Integer.toHexString(fullScreenIntent.flags)}")
+
         val fullScreenPendingIntent = PendingIntent.getActivity(
             this,
             alarm.id.hashCode(),
             fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        Log.d(TAG, "buildFullScreenNotification() PendingIntent created: $fullScreenPendingIntent")
+
+        // Check if PendingIntent was actually created
+        val testPendingIntent = PendingIntent.getActivity(
+            this,
+            alarm.id.hashCode(),
+            fullScreenIntent,
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        )
+        Log.d(TAG, "buildFullScreenNotification() PendingIntent verify (FLAG_NO_CREATE): ${testPendingIntent != null}")
 
         // Dismiss action
         val dismissIntent = Intent(this, AlarmService::class.java).apply {
@@ -303,7 +365,7 @@ class AlarmService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(alarm.label)
             .setContentText(alarm.time)
@@ -314,5 +376,11 @@ class AlarmService : Service() {
             .addAction(0, "Dismiss", dismissPendingIntent)
             .addAction(0, "Snooze", snoozePendingIntent)
             .build()
+
+        Log.d(TAG, "buildFullScreenNotification() notification.flags=0x${Integer.toHexString(notification.flags)}")
+        Log.d(TAG, "buildFullScreenNotification() notification.fullScreenIntent=${notification.fullScreenIntent}")
+        Log.d(TAG, "buildFullScreenNotification() BUILT SUCCESSFULLY")
+
+        return notification
     }
 }

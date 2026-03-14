@@ -1,8 +1,11 @@
 package com.nguyennhatminh614.alarmappcompose.ui.alarmRing
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -36,7 +39,22 @@ class AlarmRingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate() started")
+        Log.d(TAG, "=== AlarmRingActivity onCreate() START ===")
+        Log.d(TAG, "onCreate() intent=$intent")
+        Log.d(TAG, "onCreate() intent.action=${intent?.action}")
+        Log.d(TAG, "onCreate() intent.flags=0x${Integer.toHexString(intent?.flags ?: 0)}")
+        Log.d(TAG, "onCreate() intent.extras=${intent?.extras}")
+        Log.d(TAG, "onCreate() intent.categories=${intent?.categories}")
+        Log.d(TAG, "onCreate() savedInstanceState=${savedInstanceState != null}")
+
+        // Log device state
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val km = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        Log.d(TAG, "onCreate() isInteractive=${pm.isInteractive}")
+        Log.d(TAG, "onCreate() isKeyguardLocked=${km.isKeyguardLocked}")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            Log.d(TAG, "onCreate() isDeviceLocked=${km.isDeviceLocked}")
+        }
 
         enableEdgeToEdge()
         setupScreenWake()
@@ -45,12 +63,14 @@ class AlarmRingActivity : ComponentActivity() {
         Log.d(TAG, "onCreate() alarmId=$alarmId")
         if (alarmId == null) {
             Log.e(TAG, "onCreate() FAILED - no alarm ID, finishing")
+            Log.e(TAG, "onCreate() ALL extras: ${intent?.extras?.keySet()?.joinToString { "$it=${intent.extras?.get(it)}" }}")
             finish()
             return
         }
 
         CoroutineScope(Dispatchers.IO).launch {
             alarm = alarmUseCases.getAlarmById(alarmId)
+            Log.d(TAG, "onCreate() loaded alarm from DB: $alarm")
         }
 
         setContent {
@@ -59,16 +79,49 @@ class AlarmRingActivity : ComponentActivity() {
                     alarm = alarm,
                     snoozeDurationMinutes = AlarmService.SNOOZE_DURATION_MINUTES,
                     onDismiss = {
+                        Log.d(TAG, "onDismiss() called")
                         sendServiceAction(AlarmService.ACTION_DISMISS)
                         finish()
                     },
                     onSnooze = {
+                        Log.d(TAG, "onSnooze() called")
                         sendServiceAction(AlarmService.ACTION_SNOOZE)
                         finish()
                     },
                 )
             }
         }
+        Log.d(TAG, "=== AlarmRingActivity onCreate() END ===")
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Log.d(TAG, "onNewIntent() intent=$intent, alarmId=${intent.getStringExtra(EXTRA_ALARM_ID)}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart()")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume()")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause()")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop()")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy()")
     }
 
     private fun setupScreenWake() {
