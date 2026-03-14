@@ -1,8 +1,14 @@
 package com.nguyennhatminh614.alarmappcompose.ui
 
 import android.net.Uri
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,7 +22,13 @@ import com.nguyennhatminh614.alarmappcompose.ui.soundPicker.SoundPickerScreenRou
 @Composable
 fun ComposeApp() {
     val navController = rememberNavController()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing,
+        containerColor = androidx.compose.material3.MaterialTheme.colorScheme.background
+    ) { safePadding ->
     NavHost(
+        modifier = Modifier.padding(safePadding),
         navController = navController,
         startDestination = Route.LIST_ALARM
     ) {
@@ -88,6 +100,7 @@ fun ComposeApp() {
                 }
             )
         }
+    }
     }
 }
 
