@@ -61,3 +61,16 @@ Before answering any Compose question, consult the relevant reference:
 
 For implementation details, check actual source code in
 `jetpack-compose-expert-skill/references/source-code/`.
+
+## Git Workflow
+For all Git tasks (branching, commits, PRs, merging, CI/CD), follow the workflow and checklists in
+`.claude/skills/git-workflow/SKILL.md`.
+
+Before performing any Git operation, consult the relevant reference:
+- Branching strategies -> `.claude/skills/git-workflow/references/branching-strategies.md`
+- Commit conventions -> `.claude/skills/git-workflow/references/commit-conventions.md`
+- Pull request workflow -> `.claude/skills/git-workflow/references/pull-request-workflow.md`
+- CI/CD integration -> `.claude/skills/git-workflow/references/ci-cd-integration.md`
+- Advanced Git (rebase, cherry-pick) -> `.claude/skills/git-workflow/references/advanced-git.md`
+- GitHub releases -> `.claude/skills/git-workflow/references/github-releases.md`
+- Code quality tools -> `.claude/skills/git-workflow/references/code-quality-tools.md`
