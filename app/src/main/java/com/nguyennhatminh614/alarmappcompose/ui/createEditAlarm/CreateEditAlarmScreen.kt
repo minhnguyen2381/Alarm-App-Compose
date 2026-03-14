@@ -32,9 +32,17 @@ fun CreateEditAlarmScreen(
     onNavigateToSoundPicker: (currentSoundUri: String?) -> Unit = {},
     selectedSoundUri: String? = null,
     selectedSoundName: String? = null,
+    alarmId: String? = null,
 ) {
     val viewModel: CreateEditAlarmViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Load existing alarm for editing
+    LaunchedEffect(alarmId) {
+        if (alarmId != null) {
+            viewModel.loadAlarm(alarmId)
+        }
+    }
 
     // Apply returned sound selection from SoundPicker
     LaunchedEffect(selectedSoundUri, selectedSoundName) {

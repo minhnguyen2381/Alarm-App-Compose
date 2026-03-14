@@ -39,7 +39,8 @@ import com.nguyennhatminh614.alarmappcompose.R
 fun AlarmItem(
     alarm: Alarm,
     onToggle: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     val alpha = if (alarm.isEnabled) 1f else 0.5f
 
@@ -50,7 +51,8 @@ fun AlarmItem(
             .clip(RoundedCornerShape(24.dp)),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+        ),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier

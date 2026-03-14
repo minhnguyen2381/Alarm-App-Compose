@@ -30,6 +30,7 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.AlarmItem
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.NextAlarmBanner
+import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.SwipeableAlarmItem
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -40,6 +41,8 @@ import kotlinx.collections.immutable.toImmutableList
 fun AlarmsScreen(
     alarms: ImmutableList<Alarm>,
     onToggleAlarm: (Alarm, Boolean) -> Unit,
+    onDeleteAlarm: (Alarm) -> Unit,
+    onAlarmClick: (Alarm) -> Unit,
     onAddAlarmClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -87,9 +90,11 @@ fun AlarmsScreen(
                     items = alarms,
                     key = { it.id }
                 ) { alarm ->
-                    AlarmItem(
+                    SwipeableAlarmItem(
                         alarm = alarm,
-                        onToggle = { isEnabled -> onToggleAlarm(alarm, isEnabled) }
+                        onToggle = { isEnabled -> onToggleAlarm(alarm, isEnabled) },
+                        onClick = { onAlarmClick(alarm) },
+                        onDeleteConfirmed = { onDeleteAlarm(alarm) }
                     )
                 }
 
@@ -148,6 +153,8 @@ fun AlarmsScreenPreview(
         AlarmsScreen(
             alarms = alarms,
             onToggleAlarm = { _, _ -> },
+            onDeleteAlarm = {},
+            onAlarmClick = {},
             onAddAlarmClick = {}
         )
     }

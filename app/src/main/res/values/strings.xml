@@ -22,6 +22,10 @@
     <string name="wake_up_missions">Wake-up Missions</string>
     <string name="math_mission_info">Solve 3 math problems (Medium difficulty) to turn off the alarm. This ensures your brain is fully awake.</string>
     <string name="delete_alarm">Delete Alarm</string>
+    <string name="delete_alarm_dialog_title">Delete alarm?</string>
+    <string name="delete_alarm_dialog_message">Are you sure you want to delete the %1$s alarm for %2$s?</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
     <string name="alarms">Alarms</string>
     <string name="snooze">Snooze</string>
     <string name="dismiss">Dismiss</string>

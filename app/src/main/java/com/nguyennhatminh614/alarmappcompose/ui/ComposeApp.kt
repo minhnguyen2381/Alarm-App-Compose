@@ -24,11 +24,25 @@ fun ComposeApp() {
             AlarmsScreenRoute(
                 onNavigateToCreateAlarm = {
                     navController.navigate(Route.CREATE_EDIT_ALARM)
+                },
+                onNavigateToEditAlarm = { alarm ->
+                    navController.navigate("${Route.CREATE_EDIT_ALARM}?alarmId=${alarm.id}")
                 }
             )
         }
 
-        composable(Route.CREATE_EDIT_ALARM) { backStackEntry ->
+        composable(
+            route = "${Route.CREATE_EDIT_ALARM}?alarmId={alarmId}",
+            arguments = listOf(
+                navArgument("alarmId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val alarmId = backStackEntry.arguments?.getString("alarmId")
+
             // Observe result from SoundPicker
             val selectedSoundUri by backStackEntry.savedStateHandle
                 .getStateFlow<String?>("selected_sound_uri", null)
@@ -46,7 +60,8 @@ fun ComposeApp() {
                     navController.navigate("${Route.SOUND_PICKER_BASE}?currentSoundUri=$encoded")
                 },
                 selectedSoundUri = selectedSoundUri,
-                selectedSoundName = selectedSoundName
+                selectedSoundName = selectedSoundName,
+                alarmId = alarmId
             )
         }
 

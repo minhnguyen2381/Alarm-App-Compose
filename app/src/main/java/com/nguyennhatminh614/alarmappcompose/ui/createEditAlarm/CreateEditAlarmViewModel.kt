@@ -55,6 +55,26 @@ class CreateEditAlarmViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CreateEditAlarmUiState())
     val uiState: StateFlow<CreateEditAlarmUiState> = _uiState.asStateFlow()
 
+    fun loadAlarm(alarmId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val alarm = alarmUseCases.getAlarmById(alarmId) ?: return@launch
+            _uiState.update {
+                it.copy(
+                    initialAlarmId = alarm.id,
+                    time = alarm.time,
+                    label = alarm.label,
+                    repeatDays = alarm.repeatDays,
+                    soundUri = alarm.soundUri,
+                    soundName = alarm.soundName,
+                    isFadeInSound = alarm.isFadeInSound,
+                    vibrationPattern = alarm.vibrationPattern,
+                    wakeUpMission = alarm.wakeUpMission,
+                    isEditing = true
+                )
+            }
+        }
+    }
+
     fun onEvent(event: CreateEditAlarmEvent) {
         when (event) {
             is CreateEditAlarmEvent.TimeChanged -> {
