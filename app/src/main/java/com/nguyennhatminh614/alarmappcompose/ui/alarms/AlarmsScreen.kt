@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.nguyennhatminh614.alarmappcompose.R
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
-import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.AlarmItem
+import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.ExactAlarmPermissionBanner
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.NextAlarmBanner
 import com.nguyennhatminh614.alarmappcompose.ui.alarms.components.SwipeableAlarmItem
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
@@ -41,11 +41,14 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AlarmsScreen(
     alarms: ImmutableList<Alarm>,
+    showPermissionBanner: Boolean,
+    shouldOpenSettings: Boolean,
+    onGrantPermissionClick: () -> Unit,
     onToggleAlarm: (Alarm, Boolean) -> Unit,
     onDeleteAlarm: (Alarm) -> Unit,
     onAlarmClick: (Alarm) -> Unit,
     onAddAlarmClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -87,8 +90,18 @@ fun AlarmsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(bottom = 100.dp) // Leave space for banner if needed, or if banner is in scroll list
+                contentPadding = PaddingValues(bottom = 100.dp)
             ) {
+                if (showPermissionBanner) {
+                    item(key = "permission_banner") {
+                        ExactAlarmPermissionBanner(
+                            shouldOpenSettings = shouldOpenSettings,
+                            onGrantClick = onGrantPermissionClick,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                        )
+                    }
+                }
+
                 items(
                     items = alarms,
                     key = { it.id }
@@ -155,6 +168,26 @@ fun AlarmsScreenPreview(
     MaterialTheme {
         AlarmsScreen(
             alarms = alarms,
+            showPermissionBanner = true,
+            shouldOpenSettings = false,
+            onGrantPermissionClick = {},
+            onToggleAlarm = { _, _ -> },
+            onDeleteAlarm = {},
+            onAlarmClick = {},
+            onAddAlarmClick = {}
+        )
+    }
+}
+
+@DevicePreview
+@Composable
+fun AlarmsScreenPermissionSettingsPreview() {
+    MaterialTheme {
+        AlarmsScreen(
+            alarms = persistentListOf(),
+            showPermissionBanner = true,
+            shouldOpenSettings = true,
+            onGrantPermissionClick = {},
             onToggleAlarm = { _, _ -> },
             onDeleteAlarm = {},
             onAlarmClick = {},
