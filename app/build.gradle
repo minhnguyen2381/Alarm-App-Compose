@@ -112,6 +112,9 @@ dependencies {
     implementation libs.mlkit.image.labeling
     implementation libs.accompanist.permissions
 
+    //==================== DataStore ====================
+    implementation libs.datastore.preferences
+
     //==================== Collections ====================
     implementation libs.kotlinx.collections.immutable
 }
