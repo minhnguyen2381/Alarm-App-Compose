@@ -3,6 +3,7 @@ package com.nguyennhatminh614.alarmappcompose.ui.alarmRing
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class AlarmRingActivity : ComponentActivity() {
 
     companion object {
+        private const val TAG = "AlarmRingActivity"
         const val EXTRA_ALARM_ID = "extra_alarm_id"
     }
 
@@ -34,12 +36,15 @@ class AlarmRingActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate() started")
 
         enableEdgeToEdge()
         setupScreenWake()
 
         val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID)
+        Log.d(TAG, "onCreate() alarmId=$alarmId")
         if (alarmId == null) {
+            Log.e(TAG, "onCreate() FAILED - no alarm ID, finishing")
             finish()
             return
         }

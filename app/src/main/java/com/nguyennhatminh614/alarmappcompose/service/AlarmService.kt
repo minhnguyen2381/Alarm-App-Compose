@@ -15,6 +15,7 @@ import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.nguyennhatminh614.alarmappcompose.R
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
@@ -35,6 +36,7 @@ import javax.inject.Inject
 class AlarmService : Service() {
 
     companion object {
+        private const val TAG = "AlarmService"
         const val EXTRA_ALARM_ID = "extra_alarm_id"
         const val CHANNEL_ID = "alarm_channel"
         const val NOTIFICATION_ID = 1
@@ -58,16 +60,21 @@ class AlarmService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "onCreate()")
         createNotificationChannel()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "onStartCommand() action=${intent?.action}, alarmId=${intent?.getStringExtra(EXTRA_ALARM_ID)}")
+
         when (intent?.action) {
             ACTION_DISMISS -> {
+                Log.d(TAG, "onStartCommand() ACTION_DISMISS")
                 stopAlarm()
                 return START_NOT_STICKY
             }
             ACTION_SNOOZE -> {
+                Log.d(TAG, "onStartCommand() ACTION_SNOOZE")
                 snoozeAlarm()
                 return START_NOT_STICKY
             }
@@ -75,6 +82,7 @@ class AlarmService : Service() {
 
         val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID)
         if (alarmId == null) {
+            Log.e(TAG, "onStartCommand() FAILED - alarmId is null, stopping")
             stopSelf()
             return START_NOT_STICKY
         }
@@ -82,25 +90,39 @@ class AlarmService : Service() {
         currentAlarmId = alarmId
 
         // Must call startForeground within 5 seconds
-        startForeground(NOTIFICATION_ID, buildNotification("Alarm"))
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification("Alarm"))
+            Log.d(TAG, "onStartCommand() startForeground SUCCESS")
+        } catch (e: Exception) {
+            Log.e(TAG, "onStartCommand() startForeground FAILED: ${e.message}", e)
+        }
 
         serviceScope.launch {
             val alarm = alarmUseCases.getAlarmById(alarmId)
+            Log.d(TAG, "onStartCommand() loaded alarm=$alarm")
             if (alarm != null) {
-                val notification = buildFullScreenNotification(alarm)
-                val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-                nm.notify(NOTIFICATION_ID, notification)
+                try {
+                    val notification = buildFullScreenNotification(alarm)
+                    val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                    nm.notify(NOTIFICATION_ID, notification)
+                    Log.d(TAG, "onStartCommand() full-screen notification posted")
+                } catch (e: Exception) {
+                    Log.e(TAG, "onStartCommand() full-screen notification FAILED: ${e.message}", e)
+                }
 
                 startSound(alarm)
                 startVibration(alarm)
 
                 // Re-schedule repeating alarms, toggle off one-shot alarms
                 if (alarm.repeatDays.isNotEmpty()) {
+                    Log.d(TAG, "onStartCommand() re-scheduling repeating alarm")
                     alarmScheduler.schedule(alarm)
                 } else {
+                    Log.d(TAG, "onStartCommand() disabling one-shot alarm")
                     alarmUseCases.toggleAlarm(alarm, false)
                 }
             } else {
+                Log.e(TAG, "onStartCommand() alarm not found in DB for id=$alarmId")
                 stopSelf()
             }
         }
@@ -178,6 +200,8 @@ class AlarmService : Service() {
                 ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         }
 
+        Log.d(TAG, "startSound() soundUri=$soundUri, alarmSoundUri=${alarm.soundUri}")
+
         try {
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
@@ -191,8 +215,9 @@ class AlarmService : Service() {
                 prepare()
                 start()
             }
-        } catch (_: Exception) {
-            // Fallback if sound fails to play
+            Log.d(TAG, "startSound() MediaPlayer started successfully")
+        } catch (e: Exception) {
+            Log.e(TAG, "startSound() FAILED: ${e.message}", e)
         }
     }
 

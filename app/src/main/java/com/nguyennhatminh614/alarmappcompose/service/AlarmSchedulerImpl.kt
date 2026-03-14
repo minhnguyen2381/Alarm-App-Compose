@@ -5,16 +5,24 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
 import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.domain.scheduler.AlarmScheduler
 import com.nguyennhatminh614.alarmappcompose.receiver.AlarmReceiver
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class AlarmSchedulerImpl @Inject constructor(
     private val context: Context
 ) : AlarmScheduler {
+
+    companion object {
+        private const val TAG = "AlarmScheduler"
+    }
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -22,13 +30,25 @@ class AlarmSchedulerImpl @Inject constructor(
         val triggerTimeMillis = calculateNextTriggerTime(alarm)
         val pendingIntent = createPendingIntent(alarm)
 
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val triggerDateStr = sdf.format(Date(triggerTimeMillis))
+        Log.d(TAG, "schedule() alarm id=${alarm.id}, label='${alarm.label}', time=${alarm.time}")
+        Log.d(TAG, "schedule() triggerTime=$triggerDateStr ($triggerTimeMillis)")
+        Log.d(TAG, "schedule() SDK_INT=${Build.VERSION.SDK_INT}, repeatDays=${alarm.repeatDays}")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
+            val canSchedule = alarmManager.canScheduleExactAlarms()
+            Log.w(TAG, "schedule() canScheduleExactAlarms()=$canSchedule")
+            if (canSchedule) {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     triggerTimeMillis,
                     pendingIntent
                 )
+                Log.d(TAG, "schedule() SUCCESS - setExactAndAllowWhileIdle scheduled")
+            } else {
+                Log.e(TAG, "schedule() FAILED - canScheduleExactAlarms=false! Alarm NOT scheduled!")
+                Log.e(TAG, "schedule() User must grant SCHEDULE_EXACT_ALARM or app needs USE_EXACT_ALARM")
             }
         } else {
             alarmManager.setExactAndAllowWhileIdle(
@@ -36,10 +56,12 @@ class AlarmSchedulerImpl @Inject constructor(
                 triggerTimeMillis,
                 pendingIntent
             )
+            Log.d(TAG, "schedule() SUCCESS - pre-S device, setExactAndAllowWhileIdle scheduled")
         }
     }
 
     override fun cancel(alarm: Alarm) {
+        Log.d(TAG, "cancel() alarm id=${alarm.id}")
         val pendingIntent = createPendingIntent(alarm)
         alarmManager.cancel(pendingIntent)
     }
