@@ -45,23 +45,7 @@ class SoundRepositoryImpl @Inject constructor(
             )
             index++
         }
-
-        // If we have fewer alarm ringtones than preset names, fill remaining from the same list
-        if (sounds.size < presetNames.size) {
-            cursor.moveToFirst()
-            while (sounds.size < presetNames.size && !cursor.isAfterLast) {
-                val uri = ringtoneManager.getRingtoneUri(cursor.position).toString()
-                sounds.add(
-                    Sound(
-                        uri = uri,
-                        title = presetNames[sounds.size],
-                        type = SoundType.PRESET
-                    )
-                )
-                cursor.moveToNext()
-            }
-        }
-
+        
         emit(sounds)
     }.flowOn(Dispatchers.IO)
 
@@ -71,17 +55,20 @@ class SoundRepositoryImpl @Inject constructor(
         }
         val cursor = ringtoneManager.cursor
         val sounds = mutableListOf<Sound>()
+        val seenUris = mutableSetOf<String>()
 
         while (cursor.moveToNext()) {
             val title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
             val uri = ringtoneManager.getRingtoneUri(cursor.position).toString()
-            sounds.add(
-                Sound(
-                    uri = uri,
-                    title = title,
-                    type = SoundType.SYSTEM_RINGTONE
+            if (seenUris.add(uri)) {
+                sounds.add(
+                    Sound(
+                        uri = uri,
+                        title = title,
+                        type = SoundType.SYSTEM_RINGTONE
+                    )
                 )
-            )
+            }
         }
 
         emit(sounds)
