@@ -1,35 +1,35 @@
 package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
+
+private const val VIRTUAL_MULTIPLIER = 1000
 
 @Composable
 fun WheelPickerColumn(
@@ -38,97 +38,120 @@ fun WheelPickerColumn(
     onSelectedIndexChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val offsetY = remember { Animatable(0f) }
-    var itemHeightPx = remember { 0f }
+    val itemCount = values.size
+    val virtualCount = itemCount * VIRTUAL_MULTIPLIER
+    val midpoint = (VIRTUAL_MULTIPLIER / 2) * itemCount
 
-    val draggableState = rememberDraggableState { delta ->
-        scope.launch {
-            offsetY.snapTo(offsetY.value + delta)
+    // Initial position: center the selected item (it's the 2nd visible item, so -1)
+    val initialFirstVisible = midpoint + selectedIndex - 1
+    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = initialFirstVisible)
+    val snapFlingBehavior = rememberSnapFlingBehavior(lazyListState)
+
+    // Track whether selection change is internal (from scroll) to avoid feedback loops
+    val lastEmittedIndex = remember { mutableIntStateOf(selectedIndex) }
+
+    // Sync: scroll → parent (emit selection when scroll stops)
+    LaunchedEffect(Unit) {
+        snapshotFlow {
+            lazyListState.firstVisibleItemIndex to lazyListState.isScrollInProgress
+        }
+            .distinctUntilChanged()
+            .collect { (firstVisible, isScrolling) ->
+                if (!isScrolling) {
+                    // Selected item is the center one (firstVisible + 1)
+                    val realIndex = (firstVisible + 1) % itemCount
+                    if (realIndex != lastEmittedIndex.intValue) {
+                        lastEmittedIndex.intValue = realIndex
+                        onSelectedIndexChanged(realIndex)
+                    }
+                }
+            }
+    }
+
+    // Sync: parent → scroll (handle external selectedIndex changes like AM/PM toggle)
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex != lastEmittedIndex.intValue) {
+            lastEmittedIndex.intValue = selectedIndex
+            // Scroll to the nearest virtual position matching selectedIndex
+            val currentFirst = lazyListState.firstVisibleItemIndex
+            val currentReal = (currentFirst + 1) % itemCount
+            val delta = selectedIndex - currentReal
+            val targetFirst = currentFirst + delta
+            lazyListState.animateScrollToItem(targetFirst)
         }
     }
 
-    // Wrap index into valid range
-    fun wrapIndex(index: Int): Int {
-        val size = values.size
-        return ((index % size) + size) % size
-    }
+    val itemHeight = 72.dp
 
-    val prevIndex = wrapIndex(selectedIndex - 1)
-    val nextIndex = wrapIndex(selectedIndex + 1)
-
-    Column(
-        modifier = modifier
-            .clipToBounds()
-            .onSizeChanged { size ->
-                // Each visible item is roughly 1/3 of column height
-                itemHeightPx = size.height / 3f
-            }
-            .draggable(
-                state = draggableState,
-                orientation = Orientation.Vertical,
-                onDragStopped = { velocity ->
-                    // Determine how many items to snap
-                    val threshold = itemHeightPx * 0.3f
-                    val currentOffset = offsetY.value
-                    val indexDelta = when {
-                        currentOffset > threshold -> -1  // dragged down → previous
-                        currentOffset < -threshold -> 1   // dragged up → next
-                        else -> 0
-                    }
-
-                    // Animate back to zero
-                    scope.launch {
-                        offsetY.animateTo(0f, spring())
-                    }
-
-                    if (indexDelta != 0) {
-                        onSelectedIndexChanged(wrapIndex(selectedIndex + indexDelta))
-                    }
-                },
-            ),
+    LazyColumn(
+        state = lazyListState,
+        flingBehavior = snapFlingBehavior,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .height(itemHeight * 3)
+            .clipToBounds(),
     ) {
-        // Previous item
-        Text(
-            text = values[prevIndex],
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .offset { IntOffset(0, offsetY.value.roundToInt()) }
-                .clickable { onSelectedIndexChanged(prevIndex) },
-        )
+        items(count = virtualCount) { virtualIndex ->
+            val realIndex = virtualIndex % itemCount
+            val isSelected = virtualIndex == lazyListState.firstVisibleItemIndex + 1
 
-        // Current item (highlighted box)
+            WheelPickerItem(
+                text = values[realIndex],
+                isSelected = isSelected,
+                modifier = Modifier.height(itemHeight),
+            )
+        }
+    }
+}
+
+@Composable
+private fun WheelPickerItem(
+    text: String,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (isSelected) {
         Box(
-            modifier = Modifier
+            modifier = modifier
+                .width(100.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .offset { IntOffset(0, offsetY.value.roundToInt()) },
+                .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = values[selectedIndex],
+                text = text,
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 56.sp,
+                    fontSize = 44.sp,
                 ),
                 color = MaterialTheme.colorScheme.primary,
             )
         }
+    } else {
+        Box(
+            modifier = modifier
+                .width(100.dp)
+                .padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            )
+        }
+    }
+}
 
-        // Next item
-        Text(
-            text = values[nextIndex],
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .offset { IntOffset(0, offsetY.value.roundToInt()) }
-                .clickable { onSelectedIndexChanged(nextIndex) },
+@Preview(showBackground = true)
+@Composable
+private fun WheelPickerColumnPreview() {
+    AlarmAppComposeTheme {
+        WheelPickerColumn(
+            values = (0..59).map { "%02d".format(it) }.toImmutableList(),
+            selectedIndex = 30,
+            onSelectedIndexChanged = {},
         )
     }
 }
