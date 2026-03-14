@@ -32,7 +32,8 @@ data class CreateEditAlarmUiState(
     val isFadeInSound: Boolean = false,
     val vibrationPattern: VibrationPattern = VibrationPattern.HEARTBEAT,
     val wakeUpMission: WakeUpMission = WakeUpMission.MATH,
-    val isEditing: Boolean = false
+    val isEditing: Boolean = false,
+    val isLoading: Boolean = false
 )
 
 sealed interface CreateEditAlarmEvent {
@@ -56,21 +57,27 @@ class CreateEditAlarmViewModel @Inject constructor(
     val uiState: StateFlow<CreateEditAlarmUiState> = _uiState.asStateFlow()
 
     fun loadAlarm(alarmId: String) {
+        _uiState.update { it.copy(isLoading = true) }
         viewModelScope.launch(Dispatchers.IO) {
-            val alarm = alarmUseCases.getAlarmById(alarmId) ?: return@launch
+            val alarm = alarmUseCases.getAlarmById(alarmId)
             _uiState.update {
-                it.copy(
-                    initialAlarmId = alarm.id,
-                    time = alarm.time,
-                    label = alarm.label,
-                    repeatDays = alarm.repeatDays,
-                    soundUri = alarm.soundUri,
-                    soundName = alarm.soundName,
-                    isFadeInSound = alarm.isFadeInSound,
-                    vibrationPattern = alarm.vibrationPattern,
-                    wakeUpMission = alarm.wakeUpMission,
-                    isEditing = true
-                )
+                if (alarm != null) {
+                    it.copy(
+                        initialAlarmId = alarm.id,
+                        time = alarm.time,
+                        label = alarm.label,
+                        repeatDays = alarm.repeatDays,
+                        soundUri = alarm.soundUri,
+                        soundName = alarm.soundName,
+                        isFadeInSound = alarm.isFadeInSound,
+                        vibrationPattern = alarm.vibrationPattern,
+                        wakeUpMission = alarm.wakeUpMission,
+                        isEditing = true,
+                        isLoading = false
+                    )
+                } else {
+                    it.copy(isLoading = false)
+                }
             }
         }
     }

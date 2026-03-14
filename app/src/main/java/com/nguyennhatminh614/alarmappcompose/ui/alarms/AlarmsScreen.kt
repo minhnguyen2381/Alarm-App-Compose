@@ -42,6 +42,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AlarmsScreen(
     alarms: ImmutableList<Alarm>,
+    nextAlarmText: String,
     showPermissionBanner: Boolean,
     shouldOpenSettings: Boolean,
     onGrantPermissionClick: () -> Unit,
@@ -129,7 +130,11 @@ fun AlarmsScreen(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     NextAlarmBanner(
-                        nextAlarmText = "Next alarm in 6h 45m", // TODO: Calculate actual time difference dynamically
+                        nextAlarmText = if (nextAlarmText.isNotEmpty()) {
+                            stringResource(R.string.next_alarm_format, nextAlarmText)
+                        } else {
+                            stringResource(R.string.alarm_not_enabled)
+                        },
                         onAddClick = onAddAlarmClick
                     )
                 }
@@ -180,6 +185,7 @@ fun AlarmsScreenPreview(
     MaterialTheme {
         AlarmsScreen(
             alarms = alarms,
+            nextAlarmText = "6h 45m",
             showPermissionBanner = true,
             shouldOpenSettings = false,
             onGrantPermissionClick = {},
@@ -199,6 +205,7 @@ fun AlarmsScreenPermissionSettingsPreview() {
     MaterialTheme {
         AlarmsScreen(
             alarms = persistentListOf(),
+            nextAlarmText = "",
             showPermissionBanner = true,
             shouldOpenSettings = true,
             onGrantPermissionClick = {},

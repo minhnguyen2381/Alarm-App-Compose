@@ -22,6 +22,7 @@ fun AlarmsScreenRoute(
 ) {
     val context = LocalContext.current
     val alarms by viewModel.alarms.collectAsStateWithLifecycle()
+    val nextAlarmText by viewModel.nextAlarmText.collectAsStateWithLifecycle()
     val canScheduleExactAlarms by viewModel.canScheduleExactAlarms.collectAsStateWithLifecycle()
     val exceedMaxDenyCount by viewModel.exceedMaxDenyCount.collectAsStateWithLifecycle()
     val canDrawOverlays by viewModel.canDrawOverlays.collectAsStateWithLifecycle()
@@ -35,6 +36,7 @@ fun AlarmsScreenRoute(
 
     AlarmsScreen(
         alarms = alarms,
+        nextAlarmText = nextAlarmText,
         showPermissionBanner = !canScheduleExactAlarms,
         shouldOpenSettings = exceedMaxDenyCount,
         onGrantPermissionClick = {

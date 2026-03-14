@@ -7,11 +7,10 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
-import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.domain.scheduler.AlarmScheduler
+import com.nguyennhatminh614.alarmappcompose.domain.util.NextAlarmCalculator
 import com.nguyennhatminh614.alarmappcompose.receiver.AlarmReceiver
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -27,7 +26,7 @@ class AlarmSchedulerImpl @Inject constructor(
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun schedule(alarm: Alarm) {
-        val triggerTimeMillis = calculateNextTriggerTime(alarm)
+        val triggerTimeMillis = calculateNextTriggerTime(alarm) ?: return
         val pendingIntent = createPendingIntent(alarm)
 
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -79,62 +78,7 @@ class AlarmSchedulerImpl @Inject constructor(
         )
     }
 
-    private fun calculateNextTriggerTime(alarm: Alarm): Long {
-        val parts = alarm.time.split(":")
-        val hour = parts[0].toInt()
-        val minute = parts[1].toInt()
-        val now = Calendar.getInstance()
-        val target = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        if (alarm.repeatDays.isEmpty()) {
-            // One-shot alarm: if time already passed today, schedule for tomorrow
-            if (!target.after(now)) {
-                target.add(Calendar.DAY_OF_YEAR, 1)
-            }
-        } else {
-            // Repeating alarm: find the next matching day
-            val calendarDays = alarm.repeatDays.map { it.toCalendarDay() }.toSet()
-            for (daysAhead in 0..6) {
-                val candidate = Calendar.getInstance().apply {
-                    timeInMillis = target.timeInMillis
-                    add(Calendar.DAY_OF_YEAR, daysAhead)
-                }
-                if (candidate.get(Calendar.DAY_OF_WEEK) in calendarDays) {
-                    if (daysAhead > 0 || candidate.after(now)) {
-                        target.add(Calendar.DAY_OF_YEAR, daysAhead)
-                        return target.timeInMillis
-                    }
-                }
-            }
-            // Fallback: schedule for next week's first matching day
-            for (daysAhead in 1..7) {
-                val candidate = Calendar.getInstance().apply {
-                    timeInMillis = target.timeInMillis
-                    add(Calendar.DAY_OF_YEAR, daysAhead)
-                }
-                if (candidate.get(Calendar.DAY_OF_WEEK) in calendarDays) {
-                    target.add(Calendar.DAY_OF_YEAR, daysAhead)
-                    return target.timeInMillis
-                }
-            }
-        }
-        return target.timeInMillis
-    }
-}
-
-private fun DayOfWeek.toCalendarDay(): Int {
-    return when (this) {
-        DayOfWeek.MONDAY -> Calendar.MONDAY
-        DayOfWeek.TUESDAY -> Calendar.TUESDAY
-        DayOfWeek.WEDNESDAY -> Calendar.WEDNESDAY
-        DayOfWeek.THURSDAY -> Calendar.THURSDAY
-        DayOfWeek.FRIDAY -> Calendar.FRIDAY
-        DayOfWeek.SATURDAY -> Calendar.SATURDAY
-        DayOfWeek.SUNDAY -> Calendar.SUNDAY
+    private fun calculateNextTriggerTime(alarm: Alarm): Long? {
+        return NextAlarmCalculator.calculateNextTriggerTime(alarm)
     }
 }

@@ -36,6 +36,14 @@ class AlarmsViewModel @Inject constructor(
             initialValue = persistentListOf()
         )
 
+    val nextAlarmText: StateFlow<String> = useCases.getNextAlarmTime()
+        .map { it ?: "" }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = ""
+        )
+
     private val _canScheduleExactAlarms = MutableStateFlow(true)
     val canScheduleExactAlarms: StateFlow<Boolean> = _canScheduleExactAlarms.asStateFlow()
 

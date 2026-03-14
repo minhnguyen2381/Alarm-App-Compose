@@ -8,10 +8,12 @@
     <string name="camera_recognition_failed">Cannot recognize the object</string>
     <string name="title_alarms">Alarms</string>
     <string name="next_alarm_format">Next alarm in %1$s</string>
+    <string name="alarm_not_enabled">Alarm is not enabled</string>
     <string name="action_add_alarm">Add Alarm</string>
     <string name="daily">Daily</string>
     <string name="close">Close</string>
     <string name="edit_alarm">Edit Alarm</string>
+    <string name="create_alarm">Create Alarm</string>
     <string name="save">Save</string>
     <string name="repeat">Repeat</string>
     <string name="alarm_label">Alarm Label</string>

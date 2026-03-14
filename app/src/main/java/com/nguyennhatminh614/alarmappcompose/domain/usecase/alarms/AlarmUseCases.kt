@@ -5,5 +5,6 @@ data class AlarmUseCases(
     val getAlarmById: GetAlarmByIdUseCase,
     val addAlarm: AddAlarmUseCase,
     val toggleAlarm: ToggleAlarmUseCase,
-    val deleteAlarm: DeleteAlarmUseCase
+    val deleteAlarm: DeleteAlarmUseCase,
+    val getNextAlarmTime: GetNextAlarmTimeUseCase
 )

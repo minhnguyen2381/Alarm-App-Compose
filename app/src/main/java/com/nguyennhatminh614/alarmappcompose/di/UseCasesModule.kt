@@ -7,6 +7,7 @@ import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.AddAlarmUseCa
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.AlarmUseCases
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.DeleteAlarmUseCase
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.GetAlarmByIdUseCase
+import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.GetNextAlarmTimeUseCase
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.GetAlarmsUseCase
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.ToggleAlarmUseCase
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.sounds.GetDeviceAudioFilesUseCase
@@ -35,7 +36,8 @@ object UseCasesModule {
             getAlarmById = GetAlarmByIdUseCase(repository),
             addAlarm = AddAlarmUseCase(repository, alarmScheduler),
             toggleAlarm = ToggleAlarmUseCase(repository, alarmScheduler),
-            deleteAlarm = DeleteAlarmUseCase(repository, alarmScheduler)
+            deleteAlarm = DeleteAlarmUseCase(repository, alarmScheduler),
+            getNextAlarmTime = GetNextAlarmTimeUseCase(repository)
         )
     }
 

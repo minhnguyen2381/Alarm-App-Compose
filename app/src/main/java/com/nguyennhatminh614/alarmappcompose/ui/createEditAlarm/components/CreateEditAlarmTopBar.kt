@@ -25,6 +25,7 @@ import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 fun CreateEditAlarmTopBar(
     onCloseClick: () -> Unit,
     onSaveClick: () -> Unit,
+    isEditing: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -43,7 +44,7 @@ fun CreateEditAlarmTopBar(
         }
         
         Text(
-            text = stringResource(R.string.edit_alarm),
+            text = stringResource(if (isEditing) R.string.edit_alarm else R.string.create_alarm),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
@@ -65,7 +66,8 @@ private fun CreateEditAlarmTopBarPreview() {
     AlarmAppComposeTheme {
         CreateEditAlarmTopBar(
             onCloseClick = {},
-            onSaveClick = {}
+            onSaveClick = {},
+            isEditing = true
         )
     }
 }
