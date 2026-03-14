@@ -39,6 +39,8 @@ fun AlarmRingScreen(
     onSnooze: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var completedCount by remember { mutableIntStateOf(0) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -68,7 +70,6 @@ fun AlarmRingScreen(
 
         // Wake-up mission card (conditional)
         if (alarm != null && alarm.wakeUpMission != WakeUpMission.NONE) {
-            var completedCount by remember { mutableIntStateOf(0) }
             val totalCount = getMissionTotalCount(alarm.wakeUpMission)
             WakeUpMissionCard(
                 mission = alarm.wakeUpMission,
