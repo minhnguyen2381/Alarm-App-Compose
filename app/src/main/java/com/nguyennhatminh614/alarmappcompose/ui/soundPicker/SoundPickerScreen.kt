@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -175,10 +176,10 @@ fun SoundPickerScreen(
                     }
 
                     // Show preset sounds first (they are system ringtones with custom names)
-                    items(
+                    itemsIndexed(
                         items = uiState.presetSounds,
-                        key = { "preset_${it.uri}" }
-                    ) { sound ->
+                        key = { index, item -> "preset_${index}_${item.uri}" }
+                    ) { _, sound ->
                         SoundItem(
                             title = sound.title,
                             isSelected = sound.uri == uiState.selectedSoundUri,
