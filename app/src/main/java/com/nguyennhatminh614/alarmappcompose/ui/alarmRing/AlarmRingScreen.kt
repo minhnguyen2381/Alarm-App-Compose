@@ -27,6 +27,7 @@ import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.components.SwipeToDism
 import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.components.TimeDisplay
 import com.nguyennhatminh614.alarmappcompose.ui.alarmRing.components.WakeUpMissionCard
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingBackground
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 import kotlinx.collections.immutable.persistentListOf
 
