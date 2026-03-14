@@ -15,15 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -53,6 +56,7 @@ fun SoundPickerScreen(
     uiState: SoundPickerUiState,
     onEvent: (SoundPickerEvent) -> Unit,
     onBackClick: () -> Unit,
+    onApplyClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -127,6 +131,23 @@ fun SoundPickerScreen(
                 )
             )
         },
+        bottomBar = {
+            Surface(
+                shadowElevation = 8.dp,
+                color = MaterialTheme.colorScheme.surface
+            ) {
+                Button(
+                    onClick = onApplyClick,
+                    enabled = uiState.selectedSoundUri != null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(text = stringResource(R.string.apply_sound))
+                }
+            }
+        },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         if (uiState.isLoading) {
@@ -184,8 +205,7 @@ fun SoundPickerScreen(
                             title = sound.title,
                             isSelected = sound.uri == uiState.selectedSoundUri,
                             isPlaying = sound.uri == uiState.currentlyPlayingUri,
-                            onPlayClick = { onEvent(SoundPickerEvent.PreviewSound(sound)) },
-                            onSelectClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
+                            onClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
                         )
                     }
 
@@ -200,8 +220,7 @@ fun SoundPickerScreen(
                             title = sound.title,
                             isSelected = sound.uri == uiState.selectedSoundUri,
                             isPlaying = sound.uri == uiState.currentlyPlayingUri,
-                            onPlayClick = { onEvent(SoundPickerEvent.PreviewSound(sound)) },
-                            onSelectClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
+                            onClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
                         )
                     }
                 }
@@ -221,8 +240,7 @@ fun SoundPickerScreen(
                             title = sound.title,
                             isSelected = sound.uri == uiState.selectedSoundUri,
                             isPlaying = sound.uri == uiState.currentlyPlayingUri,
-                            onPlayClick = { onEvent(SoundPickerEvent.PreviewSound(sound)) },
-                            onSelectClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
+                            onClick = { onEvent(SoundPickerEvent.SoundSelected(sound)) }
                         )
                     }
                 } else if (!uiState.hasAudioPermission) {
@@ -277,7 +295,8 @@ private fun SoundPickerScreenPreview() {
         SoundPickerScreen(
             uiState = SoundPickerUiState(isLoading = false),
             onEvent = {},
-            onBackClick = {}
+            onBackClick = {},
+            onApplyClick = {}
         )
     }
 }

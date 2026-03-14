@@ -18,7 +18,10 @@ fun SoundPickerScreenRoute(
         onEvent = viewModel::onEvent,
         onBackClick = {
             viewModel.onEvent(SoundPickerEvent.StopPreview)
-            // Return the selected sound when navigating back
+            onNavigateBack()
+        },
+        onApplyClick = {
+            viewModel.onEvent(SoundPickerEvent.StopPreview)
             val selectedSound = viewModel.getSelectedSound()
             if (selectedSound != null) {
                 onNavigateBackWithResult(selectedSound.uri, selectedSound.title)

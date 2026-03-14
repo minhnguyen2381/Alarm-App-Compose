@@ -47,4 +47,5 @@
     <string name="default_text">Default</string>
     <string name="audio_permission_rationale">Permission is needed to browse audio files on your device</string>
     <string name="grant_permission">Grant Permission</string>
+    <string name="apply_sound">Apply</string>
 </resources>

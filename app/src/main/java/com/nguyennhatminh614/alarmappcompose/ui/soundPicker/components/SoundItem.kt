@@ -31,8 +31,7 @@ fun SoundItem(
     title: String,
     isSelected: Boolean,
     isPlaying: Boolean,
-    onPlayClick: () -> Unit,
-    onSelectClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -45,12 +44,12 @@ fun SoundItem(
                     Modifier
                 }
             )
-            .clickable(onClick = onSelectClick)
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            onClick = onPlayClick,
+            onClick = onClick,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
@@ -82,7 +81,7 @@ fun SoundItem(
 
         RadioButton(
             selected = isSelected,
-            onClick = onSelectClick,
+            onClick = onClick,
             colors = RadioButtonDefaults.colors(
                 selectedColor = MaterialTheme.colorScheme.primary,
                 unselectedColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -99,8 +98,7 @@ private fun SoundItemPreview() {
             title = "Morning Breeze",
             isSelected = true,
             isPlaying = false,
-            onPlayClick = {},
-            onSelectClick = {}
+            onClick = {}
         )
     }
 }
@@ -113,8 +111,7 @@ private fun SoundItemPlayingPreview() {
             title = "Birds Chirping",
             isSelected = false,
             isPlaying = true,
-            onPlayClick = {},
-            onSelectClick = {}
+            onClick = {}
         )
     }
 }

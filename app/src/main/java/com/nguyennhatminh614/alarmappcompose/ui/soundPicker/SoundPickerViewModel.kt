@@ -34,7 +34,6 @@ data class SoundPickerUiState(
 sealed interface SoundPickerEvent {
     data class SearchQueryChanged(val query: String) : SoundPickerEvent
     data class SoundSelected(val sound: Sound) : SoundPickerEvent
-    data class PreviewSound(val sound: Sound) : SoundPickerEvent
     data object StopPreview : SoundPickerEvent
     data object AudioPermissionGranted : SoundPickerEvent
     data class DeviceFilePicked(val uri: String, val title: String) : SoundPickerEvent
@@ -74,9 +73,6 @@ class SoundPickerViewModel @Inject constructor(
             is SoundPickerEvent.SoundSelected -> {
                 _uiState.update { it.copy(selectedSoundUri = event.sound.uri) }
                 // Auto preview when selecting
-                audioPreviewManager.play(event.sound.uri)
-            }
-            is SoundPickerEvent.PreviewSound -> {
                 audioPreviewManager.play(event.sound.uri)
             }
             is SoundPickerEvent.StopPreview -> {
