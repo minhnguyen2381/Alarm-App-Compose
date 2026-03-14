@@ -1,8 +1,10 @@
 package com.nguyennhatminh614.alarmappcompose.di
 
 import com.nguyennhatminh614.alarmappcompose.domain.repository.AlarmRepository
+import com.nguyennhatminh614.alarmappcompose.domain.repository.DataStoreRepository
 import com.nguyennhatminh614.alarmappcompose.domain.repository.SoundRepository
 import com.nguyennhatminh614.alarmappcompose.domain.repository.impl.AlarmRepositoryImpl
+import com.nguyennhatminh614.alarmappcompose.domain.repository.impl.DataStoreRepositoryImpl
 import com.nguyennhatminh614.alarmappcompose.domain.repository.impl.SoundRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindSoundRepository(
         soundRepositoryImpl: SoundRepositoryImpl
     ): SoundRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDataStoreRepository(
+        dataStoreRepositoryImpl: DataStoreRepositoryImpl
+    ): DataStoreRepository
 }
