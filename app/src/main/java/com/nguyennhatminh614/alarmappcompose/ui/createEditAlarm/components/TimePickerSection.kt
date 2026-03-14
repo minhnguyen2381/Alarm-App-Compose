@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 import com.nguyennhatminh614.alarmappcompose.util.to12HourDisplay
 import com.nguyennhatminh614.alarmappcompose.util.to24Hour
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun TimePickerSection(
@@ -34,8 +35,8 @@ fun TimePickerSection(
 
     val (displayHour12, isAm) = to12HourDisplay(hour24)
 
-    val hourValues = remember { (1..12).map { "%02d".format(it) } }
-    val minuteValues = remember { (0..59).map { "%02d".format(it) } }
+    val hourValues = remember { (1..12).map { "%02d".format(it) }.toImmutableList() }
+    val minuteValues = remember { (0..59).map { "%02d".format(it) }.toImmutableList() }
 
     Row(
         modifier = modifier
@@ -56,13 +57,9 @@ fun TimePickerSection(
         )
 
         Text(
-            text = ":",
-            style = MaterialTheme.typography.displayLarge.copy(
-                fontWeight = FontWeight.Bold,
-                fontSize = 56.sp
-            ),
-            color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(
+            text = ":", style = MaterialTheme.typography.displayLarge.copy(
+                fontWeight = FontWeight.Bold, fontSize = 56.sp
+            ), color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(
                 bottom = 16.dp,
                 start = 16.dp,
                 end = 16.dp,
@@ -97,8 +94,7 @@ fun TimePickerSection(
                         val newHour24 = to24Hour(displayHour12, isAm = true)
                         onTimeChanged("%02d:%02d".format(newHour24, minuteInt))
                     }
-                }
-            )
+                })
             Text(
                 text = "PM",
                 style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
@@ -112,8 +108,7 @@ fun TimePickerSection(
                         val newHour24 = to24Hour(displayHour12, isAm = false)
                         onTimeChanged("%02d:%02d".format(newHour24, minuteInt))
                     }
-                }
-            )
+                })
         }
     }
 }
@@ -123,8 +118,6 @@ fun TimePickerSection(
 private fun TimePickerSectionPreview() {
     AlarmAppComposeTheme {
         TimePickerSection(
-            time = "07:30",
-            onTimeChanged = {}
-        )
+            time = "07:30", onTimeChanged = {})
     }
 }
