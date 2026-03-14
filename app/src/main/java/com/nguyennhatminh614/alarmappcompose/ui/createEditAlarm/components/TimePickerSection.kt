@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -29,11 +33,21 @@ fun TimePickerSection(
     onTimeChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Parse initial values once, then manage independently
     val parts = time.split(":")
-    val hour24 = parts.getOrNull(0)?.toIntOrNull() ?: 7
-    val minuteInt = parts.getOrNull(1)?.toIntOrNull() ?: 30
+    val initHour24 = parts.getOrNull(0)?.toIntOrNull() ?: 7
+    val initMinute = parts.getOrNull(1)?.toIntOrNull() ?: 30
+    val (initHour12, initIsAm) = to12HourDisplay(initHour24)
 
-    val (displayHour12, isAm) = to12HourDisplay(hour24)
+    var hourIndex by remember { mutableIntStateOf(initHour12 - 1) }
+    var minuteIndex by remember { mutableIntStateOf(initMinute) }
+    var isAm by remember { mutableStateOf(initIsAm) }
+
+    // Helper to emit combined time
+    fun emitTime(h12Index: Int = hourIndex, min: Int = minuteIndex, am: Boolean = isAm) {
+        val hour24 = to24Hour(h12Index + 1, am)
+        onTimeChanged("%02d:%02d".format(hour24, min))
+    }
 
     val hourValues = remember { (1..12).map { "%02d".format(it) }.toImmutableList() }
     val minuteValues = remember { (0..59).map { "%02d".format(it) }.toImmutableList() }
@@ -45,14 +59,13 @@ fun TimePickerSection(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Hours
+        // Hours - only updates hourIndex, does not touch minuteIndex or isAm
         WheelPickerColumn(
             values = hourValues,
-            selectedIndex = displayHour12 - 1, // 1-12 → index 0-11
+            selectedIndex = hourIndex,
             onSelectedIndexChanged = { newIndex ->
-                val newHour12 = newIndex + 1
-                val newHour24 = to24Hour(newHour12, isAm)
-                onTimeChanged("%02d:%02d".format(newHour24, minuteInt))
+                hourIndex = newIndex
+                emitTime(h12Index = newIndex)
             },
         )
 
@@ -66,18 +79,19 @@ fun TimePickerSection(
             )
         )
 
-        // Minutes
+        // Minutes - only updates minuteIndex, does not touch hourIndex or isAm
         WheelPickerColumn(
             values = minuteValues,
-            selectedIndex = minuteInt,
+            selectedIndex = minuteIndex,
             onSelectedIndexChanged = { newMinuteIndex ->
-                onTimeChanged("%02d:%02d".format(hour24, newMinuteIndex))
+                minuteIndex = newMinuteIndex
+                emitTime(min = newMinuteIndex)
             },
         )
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // AM / PM Toggle
+        // AM / PM Toggle - only updates isAm, does not touch hourIndex or minuteIndex
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -91,8 +105,8 @@ fun TimePickerSection(
                 },
                 modifier = Modifier.clickable {
                     if (!isAm) {
-                        val newHour24 = to24Hour(displayHour12, isAm = true)
-                        onTimeChanged("%02d:%02d".format(newHour24, minuteInt))
+                        isAm = true
+                        emitTime(am = true)
                     }
                 })
             Text(
@@ -105,8 +119,8 @@ fun TimePickerSection(
                 },
                 modifier = Modifier.clickable {
                     if (isAm) {
-                        val newHour24 = to24Hour(displayHour12, isAm = false)
-                        onTimeChanged("%02d:%02d".format(newHour24, minuteInt))
+                        isAm = false
+                        emitTime(am = false)
                     }
                 })
         }

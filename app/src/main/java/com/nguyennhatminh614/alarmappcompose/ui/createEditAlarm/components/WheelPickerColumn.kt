@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -47,9 +46,6 @@ fun WheelPickerColumn(
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = initialFirstVisible)
     val snapFlingBehavior = rememberSnapFlingBehavior(lazyListState)
 
-    // Track whether selection change is internal (from scroll) to avoid feedback loops
-    val lastEmittedIndex = remember { mutableIntStateOf(selectedIndex) }
-
     // Sync: scroll → parent (emit selection when scroll stops)
     LaunchedEffect(Unit) {
         snapshotFlow {
@@ -58,27 +54,12 @@ fun WheelPickerColumn(
             .distinctUntilChanged()
             .collect { (firstVisible, isScrolling) ->
                 if (!isScrolling) {
-                    // Selected item is the center one (firstVisible + 1)
                     val realIndex = (firstVisible + 1) % itemCount
-                    if (realIndex != lastEmittedIndex.intValue) {
-                        lastEmittedIndex.intValue = realIndex
+                    if (realIndex != selectedIndex) {
                         onSelectedIndexChanged(realIndex)
                     }
                 }
             }
-    }
-
-    // Sync: parent → scroll (handle external selectedIndex changes like AM/PM toggle)
-    LaunchedEffect(selectedIndex) {
-        if (selectedIndex != lastEmittedIndex.intValue) {
-            lastEmittedIndex.intValue = selectedIndex
-            // Scroll to the nearest virtual position matching selectedIndex
-            val currentFirst = lazyListState.firstVisibleItemIndex
-            val currentReal = (currentFirst + 1) % itemCount
-            val delta = selectedIndex - currentReal
-            val targetFirst = currentFirst + delta
-            lazyListState.animateScrollToItem(targetFirst)
-        }
     }
 
     val itemHeight = 72.dp
