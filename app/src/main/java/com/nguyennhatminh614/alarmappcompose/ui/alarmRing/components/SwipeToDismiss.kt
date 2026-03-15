@@ -20,8 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +38,6 @@ import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingAccent
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingOnBackground
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSwipeHandle
 import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmRingSwipeTrack
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 private const val DISMISS_THRESHOLD = 0.7f
@@ -48,22 +47,20 @@ fun SwipeToDismiss(
     onDismissed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    val offsetAnimatable = remember { Animatable(0f) }
+    var offsetPx by remember { mutableFloatStateOf(0f) }
+    val animatedOffset = remember { Animatable(0f) }
     var maxOffset by remember { mutableFloatStateOf(0f) }
+    var isDragging by remember { mutableStateOf(false) }
 
-    val draggableState = rememberDraggableState { delta ->
-        scope.launch {
-            val newValue = (offsetAnimatable.value + delta).coerceIn(0f, maxOffset)
-            offsetAnimatable.snapTo(newValue)
-        }
-    }
-
-    val currentOffset = offsetAnimatable.value
+    val currentOffset = if (isDragging) offsetPx else animatedOffset.value
     val textAlpha = if (maxOffset > 0f) {
         (1f - (currentOffset / maxOffset)).coerceIn(0f, 1f)
     } else {
         1f
+    }
+
+    val draggableState = rememberDraggableState { delta ->
+        offsetPx = (offsetPx + delta).coerceIn(0f, maxOffset)
     }
 
     Box(
@@ -73,7 +70,7 @@ fun SwipeToDismiss(
             .clip(RoundedCornerShape(32.dp))
             .background(AlarmRingSwipeTrack)
             .onSizeChanged { size ->
-                val handleSizePx = 56.dp.value * size.height / 64.dp.value
+                val handleSizePx = size.height.toFloat() * 56f / 64f
                 val newMax = size.width.toFloat() - handleSizePx
                 if (newMax > 0) maxOffset = newMax
             },
@@ -95,21 +92,28 @@ fun SwipeToDismiss(
                 .offset { IntOffset(currentOffset.roundToInt(), 0) }
                 .size(56.dp)
                 .align(Alignment.CenterStart)
-                .padding(4.dp)
-                .clip(CircleShape)
-                .background(AlarmRingSwipeHandle)
                 .draggable(
                     state = draggableState,
                     orientation = Orientation.Horizontal,
+                    onDragStarted = {
+                        isDragging = true
+                    },
                     onDragStopped = {
-                        if (maxOffset > 0f && currentOffset >= maxOffset * DISMISS_THRESHOLD) {
-                            offsetAnimatable.animateTo(maxOffset)
+                        isDragging = false
+                        val finalOffset = offsetPx
+                        animatedOffset.snapTo(finalOffset)
+                        if (maxOffset > 0f && finalOffset >= maxOffset * DISMISS_THRESHOLD) {
+                            animatedOffset.animateTo(maxOffset)
                             onDismissed()
                         } else {
-                            offsetAnimatable.animateTo(0f)
+                            animatedOffset.animateTo(0f)
+                            offsetPx = 0f
                         }
                     },
-                ),
+                )
+                .padding(4.dp)
+                .clip(CircleShape)
+                .background(AlarmRingSwipeHandle),
             contentAlignment = Alignment.Center,
         ) {
             Icon(

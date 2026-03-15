@@ -9,6 +9,7 @@ import android.os.PowerManager
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
@@ -36,6 +37,7 @@ class AlarmRingActivity : ComponentActivity() {
     lateinit var alarmUseCases: AlarmUseCases
 
     private var alarm by mutableStateOf<Alarm?>(null)
+    private var isAlarmActive = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +61,13 @@ class AlarmRingActivity : ComponentActivity() {
         enableEdgeToEdge()
         setupScreenWake()
 
+        // Block back press to prevent dismissing the alarm screen
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "Back press intercepted and blocked")
+            }
+        })
+
         val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID)
         Log.d(TAG, "onCreate() alarmId=$alarmId")
         if (alarmId == null) {
@@ -80,11 +89,13 @@ class AlarmRingActivity : ComponentActivity() {
                     snoozeDurationMinutes = AlarmService.SNOOZE_DURATION_MINUTES,
                     onDismiss = {
                         Log.d(TAG, "onDismiss() called")
+                        isAlarmActive = false
                         sendServiceAction(AlarmService.ACTION_DISMISS)
                         finish()
                     },
                     onSnooze = {
                         Log.d(TAG, "onSnooze() called")
+                        isAlarmActive = false
                         sendServiceAction(AlarmService.ACTION_SNOOZE)
                         finish()
                     },

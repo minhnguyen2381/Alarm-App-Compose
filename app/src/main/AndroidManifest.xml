@@ -50,6 +50,7 @@
             android:showOnLockScreen="true"
             android:turnScreenOn="true"
             android:taskAffinity=""
+            android:launchMode="singleInstance"
             android:excludeFromRecents="true" />
 
         <!-- Alarm BroadcastReceiver -->
