@@ -66,6 +66,12 @@ For implementation details, check actual source code in
 For all Git tasks (branching, commits, PRs, merging, CI/CD), follow the workflow and checklists in
 `.claude/skills/git-workflow/SKILL.md`.
 
+### Skip Rules
+The following steps are **SKIPPED** in this project — do NOT perform them, do NOT ask about them:
+- **Verification Step**: Skip all CI verification steps (e.g., `gh pr checks`, checking CI annotations, `statusCheckRollup`)
+- **Unit Test Step**: Skip running or checking unit tests (e.g., `./gradlew test`, `./gradlew testDebugUnitTest`)
+- **UI Test Step**: Skip running or checking instrumented/UI tests (e.g., `./gradlew connectedAndroidTest`)
+
 Before performing any Git operation, consult the relevant reference:
 - Branching strategies -> `.claude/skills/git-workflow/references/branching-strategies.md`
 - Commit conventions -> `.claude/skills/git-workflow/references/commit-conventions.md`
