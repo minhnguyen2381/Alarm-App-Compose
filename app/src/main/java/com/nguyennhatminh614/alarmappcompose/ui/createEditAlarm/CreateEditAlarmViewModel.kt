@@ -8,6 +8,7 @@ import com.nguyennhatminh614.alarmappcompose.domain.model.DayOfWeek
 import com.nguyennhatminh614.alarmappcompose.domain.model.VibrationPattern
 import com.nguyennhatminh614.alarmappcompose.domain.model.WakeUpMission
 import com.nguyennhatminh614.alarmappcompose.domain.usecase.alarms.AlarmUseCases
+import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,14 +51,27 @@ sealed interface CreateEditAlarmEvent {
 
 @HiltViewModel
 class CreateEditAlarmViewModel @Inject constructor(
-    private val alarmUseCases: AlarmUseCases
+    private val alarmUseCases: AlarmUseCases,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateEditAlarmUiState())
+    private val alarmId: String? = savedStateHandle["alarmId"]
+
+    private val _uiState = MutableStateFlow(
+        CreateEditAlarmUiState(
+            isLoading = alarmId != null,
+            isEditing = alarmId != null
+        )
+    )
     val uiState: StateFlow<CreateEditAlarmUiState> = _uiState.asStateFlow()
 
-    fun loadAlarm(alarmId: String) {
-        _uiState.update { it.copy(isLoading = true) }
+    init {
+        if (alarmId != null) {
+            loadAlarm(alarmId)
+        }
+    }
+
+    private fun loadAlarm(alarmId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val alarm = alarmUseCases.getAlarmById(alarmId)
             _uiState.update {
@@ -76,7 +90,7 @@ class CreateEditAlarmViewModel @Inject constructor(
                         isLoading = false
                     )
                 } else {
-                    it.copy(isLoading = false)
+                    it.copy(isLoading = false, isEditing = false)
                 }
             }
         }

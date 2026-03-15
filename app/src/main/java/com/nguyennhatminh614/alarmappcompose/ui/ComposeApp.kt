@@ -53,8 +53,6 @@ fun ComposeApp() {
                 }
             )
         ) { backStackEntry ->
-            val alarmId = backStackEntry.arguments?.getString("alarmId")
-
             // Observe result from SoundPicker
             val selectedSoundUri by backStackEntry.savedStateHandle
                 .getStateFlow<String?>("selected_sound_uri", null)
@@ -73,7 +71,6 @@ fun ComposeApp() {
                 },
                 selectedSoundUri = selectedSoundUri,
                 selectedSoundName = selectedSoundName,
-                alarmId = alarmId
             )
         }
 
