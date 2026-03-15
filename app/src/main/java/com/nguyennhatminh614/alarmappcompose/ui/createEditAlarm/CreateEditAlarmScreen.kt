@@ -92,8 +92,8 @@ fun CreateEditAlarmContent(
     onCloseClick: () -> Unit,
     onSaveClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onSoundClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    onSoundClick: () -> Unit = {},
     scrollState: ScrollState = rememberScrollState(),
 ) {
     Scaffold(
