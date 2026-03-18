@@ -31,7 +31,7 @@ import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
 import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 
 @Composable
-fun CreateEditAlarmScreen(
+fun CreateEditAlarmRoute(
     onNavigateBack: () -> Unit,
     onNavigateToSoundPicker: (currentSoundUri: String?) -> Unit = {},
     selectedSoundUri: String? = null,
@@ -60,7 +60,7 @@ fun CreateEditAlarmScreen(
             CircularProgressIndicator()
         }
     } else {
-        CreateEditAlarmContent(
+        CreateEditAlarmScreen(
             uiState = uiState,
             onEvent = viewModel::onEvent,
             onCloseClick = onNavigateBack,
@@ -78,7 +78,7 @@ fun CreateEditAlarmScreen(
 }
 
 @Composable
-fun CreateEditAlarmContent(
+fun CreateEditAlarmScreen(
     uiState: CreateEditAlarmUiState,
     onEvent: (CreateEditAlarmEvent) -> Unit,
     onCloseClick: () -> Unit,
@@ -144,9 +144,9 @@ fun CreateEditAlarmContent(
 
 @DevicePreview
 @Composable
-private fun CreateEditAlarmContentPreview() {
+private fun CreateEditAlarmScreenPreview() {
     AlarmAppComposeTheme {
-        CreateEditAlarmContent(
+        CreateEditAlarmScreen(
             uiState = CreateEditAlarmUiState(),
             onEvent = {},
             onCloseClick = {},
