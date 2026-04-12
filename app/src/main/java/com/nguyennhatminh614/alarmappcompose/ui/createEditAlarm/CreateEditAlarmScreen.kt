@@ -16,6 +16,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.AlarmSettingsSection
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.CreateEditAlarmTopBar
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.DangerZoneSection
+import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.EditLabelDialog
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.RepeatSection
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.TimePickerSection
 import com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components.WakeUpMissionsSection
@@ -88,6 +92,18 @@ fun CreateEditAlarmScreen(
     onSoundClick: () -> Unit = {},
     scrollState: ScrollState = rememberScrollState(),
 ) {
+    var showLabelDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showLabelDialog) {
+        EditLabelDialog(
+            initialLabel = uiState.label,
+            onConfirm = { newLabel ->
+                onEvent(CreateEditAlarmEvent.LabelChanged(newLabel))
+                showLabelDialog = false
+            },
+            onDismiss = { showLabelDialog = false }
+        )
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -121,7 +137,7 @@ fun CreateEditAlarmScreen(
 
             AlarmSettingsSection(
                 label = uiState.label,
-                onLabelClick = { /* TODO: Show dialog to edit label */ },
+                onLabelClick = { showLabelDialog = true },
                 soundUriName = uiState.soundName ?: uiState.soundUri,
                 onSoundClick = onSoundClick,
                 isFadeInSound = uiState.isFadeInSound,

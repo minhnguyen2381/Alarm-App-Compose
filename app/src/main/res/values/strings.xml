@@ -63,4 +63,8 @@
     <!-- Overlay Permission -->
     <string name="overlay_permission_warning">Display over other apps permission is needed so alarms can appear on your screen reliably. Please grant it in Settings.</string>
     <string name="overlay_permission_open_settings">Open Settings</string>
+
+    <!-- Edit Label Dialog -->
+    <string name="edit_label_dialog_title">Edit Label</string>
+    <string name="edit_label_dialog_placeholder">Enter label</string>
 </resources>
