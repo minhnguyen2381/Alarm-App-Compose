@@ -1,9 +1,11 @@
 package com.nguyennhatminh614.alarmappcompose.ui.createEditAlarm.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,9 +34,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.nguyennhatminh614.alarmappcompose.R
+import com.nguyennhatminh614.alarmappcompose.ui.theme.AlarmAppComposeTheme
+import com.nguyennhatminh614.alarmappcompose.util.DevicePreview
 
 private const val MAX_LABEL_LENGTH = 50
 
@@ -148,5 +153,22 @@ fun EditLabelDialog(
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
+    }
+}
+
+@DevicePreview
+@Composable
+fun PreviewEditLabelDialog() {
+    AlarmAppComposeTheme {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            EditLabelDialog(
+                "aaaaaa",
+                onConfirm = {},
+                onDismiss = {},
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
