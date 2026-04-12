@@ -1,11 +1,5 @@
 package com.nguyennhatminh614.alarmappcompose.ui.alarms
 
-import android.app.AlarmManager
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -13,6 +7,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nguyennhatminh614.alarmappcompose.domain.model.Alarm
+import com.nguyennhatminh614.alarmappcompose.util.checkCanDrawOverlays
+import com.nguyennhatminh614.alarmappcompose.util.checkCanScheduleExactAlarms
+import com.nguyennhatminh614.alarmappcompose.util.openExactAlarmSettings
+import com.nguyennhatminh614.alarmappcompose.util.openOverlaySettings
+import com.nguyennhatminh614.alarmappcompose.util.requestExactAlarmPermission
 
 @Composable
 fun AlarmsScreenRoute(
@@ -29,8 +28,8 @@ fun AlarmsScreenRoute(
 
     // Re-check permission every time the screen resumes (e.g. after returning from Settings)
     LifecycleResumeEffect(Unit) {
-        viewModel.updateCanScheduleExactAlarms(checkCanScheduleExactAlarms(context))
-        viewModel.updateCanDrawOverlays(checkCanDrawOverlays(context))
+        viewModel.updateCanScheduleExactAlarms(context.checkCanScheduleExactAlarms())
+        viewModel.updateCanDrawOverlays(context.checkCanDrawOverlays())
         onPauseOrDispose {}
     }
 
@@ -41,57 +40,17 @@ fun AlarmsScreenRoute(
         shouldOpenSettings = exceedMaxDenyCount,
         onGrantPermissionClick = {
             if (exceedMaxDenyCount) {
-                openExactAlarmSettings(context)
+                context.openExactAlarmSettings()
             } else {
-                requestExactAlarmPermission(context)
+                context.requestExactAlarmPermission()
                 viewModel.onPermissionDenied()
             }
         },
         showOverlayPermissionBanner = !canDrawOverlays,
-        onGrantOverlayPermissionClick = { openOverlaySettings(context) },
+        onGrantOverlayPermissionClick = { context.openOverlaySettings() },
         onToggleAlarm = viewModel::onToggleAlarm,
         onDeleteAlarm = viewModel::onDeleteAlarm,
         onAlarmClick = onNavigateToEditAlarm,
         onAddAlarmClick = onNavigateToCreateAlarm
     )
-}
-
-private fun checkCanScheduleExactAlarms(context: Context): Boolean {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
-    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    return alarmManager.canScheduleExactAlarms()
-}
-
-private fun requestExactAlarmPermission(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-            data = Uri.parse("package:${context.packageName}")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-    }
-}
-
-private fun openExactAlarmSettings(context: Context) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-            data = Uri.parse("package:${context.packageName}")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        context.startActivity(intent)
-    }
-}
-
-private fun checkCanDrawOverlays(context: Context): Boolean {
-    return Settings.canDrawOverlays(context)
-}
-
-private fun openOverlaySettings(context: Context) {
-    val intent = Intent(
-        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-        Uri.parse("package:${context.packageName}")
-    ).apply {
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    context.startActivity(intent)
 }

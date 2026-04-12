@@ -180,24 +180,17 @@ class AlarmService : Service() {
                     Log.e(TAG, "onStartCommand() full-screen notification FAILED: ${e.message}", e)
                 }
 
-                // Direct launch of AlarmRingActivity (primary mechanism)
-                // Full-screen notification remains as fallback
+                // Post full-screen notification which will launch AlarmRingActivity
+                // This is the correct Android pattern for alarm apps - the notification's
+                // fullScreenIntent handles activity launch with proper lifecycle management
                 withContext(Dispatchers.Main) {
                     try {
-                        val activityIntent = Intent(this@AlarmService, AlarmRingActivity::class.java).apply {
-                            putExtra(AlarmRingActivity.EXTRA_ALARM_ID, alarm.id)
-                            addFlags(
-                                Intent.FLAG_ACTIVITY_NEW_TASK
-                                    or Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                                    or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                    or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                            )
-                        }
-                        startActivity(activityIntent)
-                        Log.d(TAG, "onStartCommand() startActivity() for AlarmRingActivity SUCCESS")
+                        val notification = buildFullScreenNotification(alarm)
+                        val nm = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                        nm.notify(NOTIFICATION_ID, notification)
+                        Log.d(TAG, "onStartCommand() Full-screen notification posted (primary launch mechanism)")
                     } catch (e: Exception) {
-                        Log.e(TAG, "onStartCommand() startActivity() FAILED: ${e.message}", e)
-                        // Full-screen notification is already posted as fallback
+                        Log.e(TAG, "onStartCommand() Full-screen notification FAILED: ${e.message}", e)
                     }
                 }
 
@@ -222,9 +215,11 @@ class AlarmService : Service() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy()")
         stopAlarm()
         serviceScope.cancel()
         super.onDestroy()
+        Log.d(TAG, "onDestroy() complete")
     }
 
     private fun stopAlarm() {
@@ -373,7 +368,10 @@ class AlarmService : Service() {
         // Full-screen intent to launch AlarmRingActivity
         val fullScreenIntent = Intent(this, AlarmRingActivity::class.java).apply {
             putExtra(AlarmRingActivity.EXTRA_ALARM_ID, alarm.id)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_NO_USER_ACTION or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         Log.d(TAG, "buildFullScreenNotification() fullScreenIntent=$fullScreenIntent")
         Log.d(TAG, "buildFullScreenNotification() intent.extras=${fullScreenIntent.extras}")

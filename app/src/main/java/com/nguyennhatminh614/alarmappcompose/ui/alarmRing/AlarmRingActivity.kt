@@ -58,6 +58,15 @@ class AlarmRingActivity : ComponentActivity() {
             Log.d(TAG, "onCreate() isDeviceLocked=${km.isDeviceLocked}")
         }
 
+        // Check if activity is being recreated without valid intent
+        // This can happen during configuration changes or system-initiated recreations
+        val currentIntent = intent
+        if (currentIntent == null) {
+            Log.e(TAG, "onCreate() intent is null - system may be recreating activity, finishing")
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setupScreenWake()
 
@@ -68,11 +77,11 @@ class AlarmRingActivity : ComponentActivity() {
             }
         })
 
-        val alarmId = intent?.getStringExtra(EXTRA_ALARM_ID)
+        val alarmId = currentIntent.getStringExtra(EXTRA_ALARM_ID)
         Log.d(TAG, "onCreate() alarmId=$alarmId")
         if (alarmId == null) {
             Log.e(TAG, "onCreate() FAILED - no alarm ID, finishing")
-            Log.e(TAG, "onCreate() ALL extras: ${intent?.extras?.keySet()?.joinToString { "$it=${intent.extras?.get(it)}" }}")
+            Log.e(TAG, "onCreate() ALL extras: ${currentIntent.extras?.keySet()?.joinToString { "$it=${currentIntent.extras?.get(it)}" }}")
             finish()
             return
         }
@@ -108,6 +117,13 @@ class AlarmRingActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent() intent=$intent, alarmId=${intent.getStringExtra(EXTRA_ALARM_ID)}")
+
+        // Safety check - don't proceed if intent is invalid
+        if (intent.getStringExtra(EXTRA_ALARM_ID) == null) {
+            Log.w(TAG, "onNewIntent() called with null alarm ID, ignoring")
+            return
+        }
+
         val newAlarmId = intent.getStringExtra(EXTRA_ALARM_ID)
         if (newAlarmId != null && newAlarmId != this.intent?.getStringExtra(EXTRA_ALARM_ID)) {
             setIntent(intent)
